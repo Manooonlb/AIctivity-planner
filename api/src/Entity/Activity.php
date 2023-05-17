@@ -42,12 +42,15 @@ class Activity
     #[ORM\Column]
     private ?bool $open = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'image')]
-    private Collection $users;
+    #[ORM\ManyToOne(inversedBy: 'initiateActivities')]
+    private ?User $owner = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'joinActivities')]
+    private Collection $participants;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,28 +154,41 @@ class Activity
         return $this;
     }
 
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, User>
      */
-    public function getUsers(): Collection
+    public function getParticipants(): Collection
     {
-        return $this->users;
+        return $this->participants;
     }
 
-    public function addUser(User $user): self
+    public function addParticipant(User $participant): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addImage($this);
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->addJoinActivity($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeParticipant(User $participant): self
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeImage($this);
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeJoinActivity($this);
         }
 
         return $this;

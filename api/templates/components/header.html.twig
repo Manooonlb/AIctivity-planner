@@ -88,18 +88,16 @@
             data-mdb-toggle="dropdown"
             aria-expanded="false"
             >
-            <img
-                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                class="rounded-circle"
-                height="25"
-                alt="Black and White Portrait of a Man"
-                loading="lazy"
-            />
+           <i class="far fa-user"></i>
             </a>
+            
             <ul
             class="dropdown-menu dropdown-menu-end"
             aria-labelledby="navbarDropdownMenuAvatar"
             >
+
+            {% if is_granted('ROLE_USER') %}
+            
             <li>
                 <a class="dropdown-item" href="#">My profile</a>
             </li>
@@ -109,6 +107,15 @@
             <li>
                 <a class="dropdown-item" href="#">Logout</a>
             </li>
+
+            {% else %}
+             <li>
+                <a class="dropdown-item" href="{{ path('app_register') }}">Register</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ path('app_login') }}">Login</a>
+            </li>
+            {% endif %}
             </ul>
         </div>
         </div>
