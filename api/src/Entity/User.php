@@ -35,9 +35,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'users')]
-    private Collection $image;
-
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $birthday = null;
 
@@ -52,11 +49,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Message::class, orphanRemoval: true)]
     private Collection $messages;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Activity::class)]
+    private Collection $initiateActivities;
+
+    #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'participants')]
+    private Collection $joinActivities;
+
     public function __construct()
     {
-        $this->image = new ArrayCollection();
         $this->conversations = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->initiateActivities = new ArrayCollection();
+        $this->joinActivities = new ArrayCollection();
     }
 
 
@@ -130,29 +134,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, Activity>
-     */
-    public function getImage(): Collection
-    {
-        return $this->image;
-    }
-
-    public function addImage(Activity $image): self
-    {
-        if (!$this->image->contains($image)) {
-            $this->image->add($image);
-        }
-
-        return $this;
-    }
-
-    public function removeImage(Activity $image): self
-    {
-        $this->image->removeElement($image);
-
-        return $this;
-    }
+    
+    
 
     public function getBirthday(): ?\DateTimeInterface
     {
@@ -239,6 +222,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getInitiateActivities(): Collection
+    {
+        return $this->initiateActivities;
+    }
+
+    public function addInitiateActivity(Activity $initiateActivity): self
+    {
+        if (!$this->initiateActivities->contains($initiateActivity)) {
+            $this->initiateActivities->add($initiateActivity);
+            $initiateActivity->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInitiateActivity(Activity $initiateActivity): self
+    {
+        if ($this->initiateActivities->removeElement($initiateActivity)) {
+            // set the owning side to null (unless already changed)
+            if ($initiateActivity->getOwner() === $this) {
+                $initiateActivity->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getJoinActivities(): Collection
+    {
+        return $this->joinActivities;
+    }
+
+    public function addJoinActivity(Activity $joinActivity): self
+    {
+        if (!$this->joinActivities->contains($joinActivity)) {
+            $this->joinActivities->add($joinActivity);
+        }
+
+        return $this;
+    }
+
+    public function removeJoinActivity(Activity $joinActivity): self
+    {
+        $this->joinActivities->removeElement($joinActivity);
 
         return $this;
     }
