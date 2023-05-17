@@ -55,6 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'participants')]
     private Collection $joinActivities;
 
+    
+
     public function __construct()
     {
         $this->conversations = new ArrayCollection();
