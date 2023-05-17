@@ -22,9 +22,6 @@ class RegistrationFormType extends AbstractType
             ->add('username')
             ->add('email')
             ->add('birthday', BirthdayType::class, [
-                'constraints' => [
-                    new Age(['minimumAge' => 18]),
-                ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
