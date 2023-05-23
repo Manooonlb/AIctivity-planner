@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Welcome to AIctivity Planner!{% endblock %}
 
 {% block body %}
 <style>
@@ -9,12 +9,18 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/srv/app/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/srv/app/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
+    {% if is_granted('ROLE_USER') %}
+
+    <h1>Hello {{ app.user.username }} ! ✅</h1>
+
+    {% else %}
+
+    Here is our app, please join ;)
+        {# <ul>
+            <li>Your controller at <code><a href="{{ '/srv/app/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
+            <li>Your template at <code><a href="{{ '/srv/app/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
+        </ul> #}
+    {% endif %}
 </div>
 {% endblock %}
