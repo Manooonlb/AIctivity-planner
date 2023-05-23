@@ -18,10 +18,6 @@ class QcmAnswer
     #[ORM\Column(length: 1000)]
     private ?string $answer = null;
 
-    #[ORM\ManyToOne(inversedBy: 'qcmAnswers')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Qcm $question = null;
-
     #[ORM\ManyToOne(inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Qcm $qcm = null;
@@ -42,18 +38,7 @@ class QcmAnswer
 
         return $this;
     }
-
-    public function getQuestion(): ?Qcm
-    {
-        return $this->question;
-    }
-
-    public function setQuestion(?Qcm $question): self
-    {
-        $this->question = $question;
-
-        return $this;
-    }
+   
 
     public function getQcm(): ?Qcm
     {

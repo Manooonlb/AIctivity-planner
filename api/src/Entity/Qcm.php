@@ -20,9 +20,6 @@ class Qcm
     #[ORM\Column(length: 1000)]
     private ?string $question = null;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: QcmAnswer::class, orphanRemoval: true)]
-    private Collection $qcmAnswers;
-
     #[ORM\OneToMany(mappedBy: 'qcm', targetEntity: QcmAnswer::class, orphanRemoval: true)]
     private Collection $answers;
 
@@ -34,7 +31,6 @@ class Qcm
 
     public function __construct()
     {
-        $this->qcmAnswers = new ArrayCollection();
         $this->answers = new ArrayCollection();
         $this->activities = new ArrayCollection();
     }
@@ -52,36 +48,6 @@ class Qcm
     public function setQuestion(string $question): self
     {
         $this->question = $question;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, QcmAnswer>
-     */
-    public function getQcmAnswers(): Collection
-    {
-        return $this->qcmAnswers;
-    }
-
-    public function addQcmAnswer(QcmAnswer $qcmAnswer): self
-    {
-        if (!$this->qcmAnswers->contains($qcmAnswer)) {
-            $this->qcmAnswers->add($qcmAnswer);
-            $qcmAnswer->setQuestion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeQcmAnswer(QcmAnswer $qcmAnswer): self
-    {
-        if ($this->qcmAnswers->removeElement($qcmAnswer)) {
-            // set the owning side to null (unless already changed)
-            if ($qcmAnswer->getQuestion() === $this) {
-                $qcmAnswer->setQuestion(null);
-            }
-        }
 
         return $this;
     }
