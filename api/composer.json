@@ -90,7 +90,13 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "prepare-db": [
+            "php bin/console d:d:d --if-exists --force",
+            "php bin/console d:d:c",
+            "php bin/console d:m:m -n",
+            "php bin/console d:f:l --append"
+          ]
     },
     "conflict": {
         "symfony/symfony": "*"
