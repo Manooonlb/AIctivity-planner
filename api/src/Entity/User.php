@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 #[ApiResource(mercure: true)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -36,6 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\LessThan('-18 years', message:'🔞 NOPE TOO YOUNG 🔞')]
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column(type: 'boolean')]
@@ -54,6 +57,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'participants')]
     private Collection $joinActivities;
+
+    
 
     public function __construct()
     {
