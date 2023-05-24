@@ -4,6 +4,7 @@ namespace App\Form;
 use App\Entity\Qcm;
 use App\Entity\User;
 use App\Entity\Activity;
+use App\Entity\ActivityQuestion;
 use App\Entity\QcmAnswer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,6 +12,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class ActivityType extends AbstractType
 {
@@ -18,27 +21,20 @@ class ActivityType extends AbstractType
     {
         $builder
             ->add('name')
-            // ->add('description')
+            ->add('description')
             ->add('duration')
             ->add('location')
-            ->add('date', HiddenType::class)
+            ->add('date')
             ->add('starting_time')
-            ->add('outdoor')
-            ->add('image', HiddenType::class)
+            ->add('outdoor', CheckboxType::class)
             ->add('open')
             ->add('numberOfParticipants')
-            ->add('owner', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'username',
-                'multiple' => true
-            ])
-            // ->add('participants', HiddenType::class)
-            ->add('questions', EntityType::class,[
-                'choices' => $options['qcms'],
-                'class' => QcmAnswer::class,
-                'choice_label' => 'question',
-                'multiple' => true
-            ])
+            ->add('owner', HiddenType::class)
+            ->add('participants', HiddenType::class)
+            ->add('activityQuestions', CollectionType::class, [
+                'entry_type' => ActivityQuestionType::class,
+                'entry_options' => ['label' => false],
+            ]);
         ;
     }
 

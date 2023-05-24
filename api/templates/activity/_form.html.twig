@@ -1,10 +1,20 @@
-
-
 {{ form_start(form) }}
 				</div>
                 <div class="form-group">
 					{{ form_row(form.name, {
                         'attr': {'class': 'form-control', 'placeholder': 'name'}
+                        }) 
+                    }}
+				</div> 
+                <div class="form-group">
+					{{ form_row(form.description, {
+                        'attr': {'class': 'form-control', 'placeholder': 'description'}
+                        }) 
+                    }}
+				</div> 
+                 <div class="form-group">
+					{{ form_row(form.date, {
+                        'attr': {'class': 'form-control', 'placeholder': 'date'}
                         }) 
                     }}
 				</div> 
@@ -27,11 +37,19 @@
                     }}
 				</div> 
                 <div class="form-group">
-					{{ form_row(form.outdoor, {
-                        'attr': {'class': 'form-control', 'placeholder': 'outdoor'}
+					{{ form_row(form.numberOfParticipants, {
+                        'attr': {'class': 'form-control', 'placeholder': 'how many friends'}
                         }) 
                     }}
 				</div> 
-				
-    <button class="btn">{{ button_label|default('Save') }}</button> 
+                <div class="form-group">
+					{{ form_row(form.activityQuestions, {
+                        'attr': {'class': 'form-control', 'placeholder': 'questions'}
+                        }) 
+                    }}
+				</div> 
+
+
+      <button class="btn">{{ button_label|default('Save') }}</button> 
+
 {{ form_end(form) }}
