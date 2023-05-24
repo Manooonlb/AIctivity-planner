@@ -29,10 +29,14 @@ class Qcm
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: ActivityQuestion::class, orphanRemoval: true)]
+    private Collection $activityQuestions;
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
         $this->activities = new ArrayCollection();
+        $this->activityQuestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -117,6 +121,36 @@ class Qcm
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActivityQuestion>
+     */
+    public function getActivityQuestions(): Collection
+    {
+        return $this->activityQuestions;
+    }
+
+    public function addActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if (!$this->activityQuestions->contains($activityQuestion)) {
+            $this->activityQuestions->add($activityQuestion);
+            $activityQuestion->setQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if ($this->activityQuestions->removeElement($activityQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($activityQuestion->getQuestion() === $this) {
+                $activityQuestion->setQuestion(null);
+            }
+        }
 
         return $this;
     }

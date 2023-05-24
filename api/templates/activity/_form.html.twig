@@ -1,4 +1,37 @@
+
+
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+				</div>
+                <div class="form-group">
+					{{ form_row(form.name, {
+                        'attr': {'class': 'form-control', 'placeholder': 'name'}
+                        }) 
+                    }}
+				</div> 
+				<div class="form-group">
+					{{ form_row(form.duration, {
+                        'attr': {'class': 'form-control', 'placeholder': 'duration'}
+                        }) 
+                    }}
+				</div> 
+                <div class="form-group">
+					{{ form_row(form.location, {
+                        'attr': {'class': 'form-control', 'placeholder': 'location'}
+                        }) 
+                    }}
+				</div> 
+                <div class="form-group">    
+					{{ form_row(form.starting_time, {
+                        'attr': {'class': 'form-control', 'placeholder': 'date'}
+                        }) 
+                    }}
+				</div> 
+                <div class="form-group">
+					{{ form_row(form.outdoor, {
+                        'attr': {'class': 'form-control', 'placeholder': 'outdoor'}
+                        }) 
+                    }}
+				</div> 
+				
+    <button class="btn">{{ button_label|default('Save') }}</button> 
 {{ form_end(form) }}

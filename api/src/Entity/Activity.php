@@ -51,10 +51,20 @@ class Activity
     #[ORM\ManyToMany(targetEntity: Qcm::class, inversedBy: 'activities')]
     private Collection $questions;
 
+    #[ORM\Column]
+    private ?int $numberOfParticipants = null;
+
+    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: ActivityQuestion::class, orphanRemoval: true)]
+    private Collection $activityQuestions;
+
+    #[ORM\Column(length: 255)]
+    private ?string $location = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->questions = new ArrayCollection();
+        $this->activityQuestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +228,60 @@ class Activity
     public function removeQuestion(Qcm $question): self
     {
         $this->questions->removeElement($question);
+
+        return $this;
+    }
+
+    public function getNumberOfParticipants(): ?int
+    {
+        return $this->numberOfParticipants;
+    }
+
+    public function setNumberOfParticipants(int $numberOfParticipants): self
+    {
+        $this->numberOfParticipants = $numberOfParticipants;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActivityQuestion>
+     */
+    public function getActivityQuestions(): Collection
+    {
+        return $this->activityQuestions;
+    }
+
+    public function addActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if (!$this->activityQuestions->contains($activityQuestion)) {
+            $this->activityQuestions->add($activityQuestion);
+            $activityQuestion->setActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if ($this->activityQuestions->removeElement($activityQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($activityQuestion->getActivity() === $this) {
+                $activityQuestion->setActivity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): self
+    {
+        $this->location = $location;
 
         return $this;
     }

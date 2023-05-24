@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Form;
-
+use App\Entity\Qcm;
 use App\Entity\User;
 use App\Entity\Activity;
+use App\Entity\QcmAnswer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ActivityType extends AbstractType
 {
@@ -15,23 +18,26 @@ class ActivityType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('description')
+            // ->add('description')
             ->add('duration')
-            ->add('date')
+            ->add('location')
+            ->add('date', HiddenType::class)
             ->add('starting_time')
             ->add('outdoor')
-            ->add('image')
+            ->add('image', HiddenType::class)
             ->add('open')
-            ->add('participants', EntityType::class, [
-                // looks for choices from this entity
+            ->add('numberOfParticipants')
+            ->add('owner', EntityType::class, [
                 'class' => User::class,
-            
-                // uses the User.username property as the visible option string
                 'choice_label' => 'username',
-            
-                // used to render a select box, check boxes or radios
-                'multiple' => true,
-                // 'expanded' => true,
+                'multiple' => true
+            ])
+            // ->add('participants', HiddenType::class)
+            ->add('questions', EntityType::class,[
+                'choices' => $options['qcms'],
+                'class' => QcmAnswer::class,
+                'choice_label' => 'question',
+                'multiple' => true
             ])
         ;
     }
@@ -40,6 +46,7 @@ class ActivityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Activity::class,
+            'qcms' => [],
         ]);
     }
 }
