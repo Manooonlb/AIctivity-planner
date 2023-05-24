@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\QcmRepository;
+use App\Service\ActivityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,11 +27,11 @@ class ActivityController extends AbstractController
 
     #[Route('/new', name: 'app_activity_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, ActivityRepository $activityRepository, QcmRepository $qcmRepository): Response
+    public function new(Request $request, ActivityService $activityService, ActivityRepository $activityRepository, QcmRepository $qcmRepository): Response
     {
-        $activity = new Activity();
-        $qcms = $qcmRepository->findAll();
-        $form = $this->createForm(ActivityType::class, $activity, ['qcms' => $qcms]);
+        $activity = $activityService->getPrefiledActivity();
+        dump($activity);
+        $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
         $activity->setOwner($this->getUser());
 

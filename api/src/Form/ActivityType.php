@@ -1,16 +1,11 @@
 <?php
 
 namespace App\Form;
-use App\Entity\Qcm;
-use App\Entity\User;
 use App\Entity\Activity;
-use App\Entity\ActivityQuestion;
-use App\Entity\QcmAnswer;
+use App\Form\ActivityQuestionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -42,7 +37,6 @@ class ActivityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Activity::class,
-            'qcms' => [],
         ]);
     }
 }

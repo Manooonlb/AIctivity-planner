@@ -48,9 +48,6 @@ class Activity
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'joinActivities')]
     private Collection $participants;
 
-    #[ORM\ManyToMany(targetEntity: Qcm::class, inversedBy: 'activities')]
-    private Collection $questions;
-
     #[ORM\Column]
     private ?int $numberOfParticipants = null;
 
@@ -63,7 +60,6 @@ class Activity
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->questions = new ArrayCollection();
         $this->activityQuestions = new ArrayCollection();
     }
 
@@ -208,29 +204,6 @@ class Activity
         return $this;
     }
 
-    /**
-     * @return Collection<int, Qcm>
-     */
-    public function getQuestions(): Collection
-    {
-        return $this->questions;
-    }
-
-    public function addQuestion(Qcm $question): self
-    {
-        if (!$this->questions->contains($question)) {
-            $this->questions->add($question);
-        }
-
-        return $this;
-    }
-
-    public function removeQuestion(Qcm $question): self
-    {
-        $this->questions->removeElement($question);
-
-        return $this;
-    }
 
     public function getNumberOfParticipants(): ?int
     {

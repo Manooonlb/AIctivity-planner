@@ -23,9 +23,6 @@ class Qcm
     #[ORM\OneToMany(mappedBy: 'qcm', targetEntity: QcmAnswer::class, orphanRemoval: true)]
     private Collection $answers;
 
-    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'questions')]
-    private Collection $activities;
-
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
@@ -35,7 +32,6 @@ class Qcm
     public function __construct()
     {
         $this->answers = new ArrayCollection();
-        $this->activities = new ArrayCollection();
         $this->activityQuestions = new ArrayCollection();
     }
 
@@ -81,33 +77,6 @@ class Qcm
             if ($answer->getQcm() === $this) {
                 $answer->setQcm(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Activity>
-     */
-    public function getActivities(): Collection
-    {
-        return $this->activities;
-    }
-
-    public function addActivity(Activity $activity): self
-    {
-        if (!$this->activities->contains($activity)) {
-            $this->activities->add($activity);
-            $activity->addQuestion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeActivity(Activity $activity): self
-    {
-        if ($this->activities->removeElement($activity)) {
-            $activity->removeQuestion($this);
         }
 
         return $this;
