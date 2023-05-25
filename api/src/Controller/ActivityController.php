@@ -18,10 +18,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ActivityController extends AbstractController
 {
     #[Route('/', name: 'app_activity_index', methods: ['GET'])]
-    public function index(ActivityRepository $activityRepository): Response
+    public function index(ActivityRepository $activityRepository, Request $request ): Response
     {
+        $page = $request->query->get('page',1);
+        $itemsPerPage = 10 ;
+        $list = $activityRepository->findBy( ['open'=>true], ['date'=>'DESC'], $itemsPerPage, ($page - 1) * $itemsPerPage) ;
         return $this->render('activity/index.html.twig', [
-            'activities' => $activityRepository->findBy( ['open'=>true]) 
+            'activities' => $list
             
         ]);
     }
