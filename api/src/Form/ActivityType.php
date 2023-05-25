@@ -2,7 +2,9 @@
 
 namespace App\Form;
 use App\Entity\Activity;
+use App\Entity\User;
 use App\Form\ActivityQuestionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +26,10 @@ class ActivityType extends AbstractType
             ->add('outdoor', CheckboxType::class)
             ->add('open')
             ->add('numberOfParticipants')
-            ->add('owner', HiddenType::class)
+            // ->add('owner', EntityType::class,[
+            //     'class' => User::class,
+            //     'choice_label' => 'username',
+            // ])
             ->add('activityQuestions', CollectionType::class, [
                 'entry_type' => ActivityQuestionType::class,
                 'entry_options' => ['label' => false],

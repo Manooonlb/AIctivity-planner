@@ -26,6 +26,7 @@ class ActivityService
             $activityQuestion->setOwner($this->security->getUser());
             $activity->addActivityQuestion($activityQuestion);
         }
+        $activity->setOwner($this->security->getUser());
         return $activity;
     }
 

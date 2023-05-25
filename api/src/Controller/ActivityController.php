@@ -41,12 +41,11 @@ class ActivityController extends AbstractController
     public function new(Request $request, ActivityService $activityService, ActivityRepository $activityRepository, QcmRepository $qcmRepository): Response
     {
         $activity = $activityService->getPrefiledActivity();
-        dump($activity);
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
-        $activity->setOwner($this->getUser());
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $activity->setOwner($this->getUser());
             $activityRepository->save($activity, true);
 
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
@@ -75,6 +74,7 @@ class ActivityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $activity->setOwner($this->getUser());
             $activityRepository->save($activity, true);
 
             return $this->redirectToRoute('app_activity_my', [], Response::HTTP_SEE_OTHER);
