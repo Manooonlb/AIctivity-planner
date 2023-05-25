@@ -22,6 +22,8 @@ class RegistrationFormType extends AbstractType
             ->add('username')
             ->add('email')
             ->add('birthday', BirthdayType::class, [
+                'widget' => 'choice',
+                'years' => range(date('Y') - 90, date('Y')),
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
