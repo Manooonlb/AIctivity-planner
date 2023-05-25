@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ActivityType extends AbstractType
 {
@@ -21,9 +22,13 @@ class ActivityType extends AbstractType
             ->add('description')
             ->add('duration')
             ->add('location')
-            ->add('date')
+            ->add('date',DateType::Class, array(
+                'widget' => 'choice',
+                'years' => range(date('Y'), date('Y')+2)
+                
+              ))
             ->add('starting_time')
-            ->add('outdoor', CheckboxType::class)
+            ->add('outdoor')
             ->add('open')
             ->add('numberOfParticipants')
             // ->add('owner', EntityType::class,[
