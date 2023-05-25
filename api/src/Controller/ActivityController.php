@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/app/activity')]
+#[IsGranted('ROLE_USER')]
 class ActivityController extends AbstractController
 {
     #[Route('/', name: 'app_activity_index', methods: ['GET'])]
@@ -22,6 +23,16 @@ class ActivityController extends AbstractController
         return $this->render('activity/index.html.twig', [
             'activities' => $activityRepository->findBy( ['open'=>true]) 
             
+        ]);
+    }
+
+    #[Route('/my/', name: 'app_activity_my', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function myIndex(ActivityRepository $activityRepository): Response
+    {
+        return $this->render('activity/index.html.twig', [
+            'activities' => $activityRepository->findBy(['owner'=>$this->getUser()]) 
+         
         ]);
     }
 
@@ -41,13 +52,14 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('activity/new.html.twig', [
+        return $this->render('activity/new.html.twig', [
             'activity' => $activity,
             'form' => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_activity_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Activity $activity): Response
     {
         return $this->render('activity/show.html.twig', [
@@ -56,6 +68,7 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_activity_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Activity $activity, ActivityRepository $activityRepository): Response
     {
         $form = $this->createForm(ActivityType::class, $activity);
@@ -64,16 +77,17 @@ class ActivityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $activityRepository->save($activity, true);
 
-            return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_my', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('activity/edit.html.twig', [
+        return $this->render('activity/edit.html.twig', [
             'activity' => $activity,
             'form' => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_activity_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Activity $activity, ActivityRepository $activityRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$activity->getId(), $request->request->get('_token'))) {
