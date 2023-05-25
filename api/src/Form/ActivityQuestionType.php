@@ -64,8 +64,9 @@ class ActivityQuestionType extends AbstractType
             $form = $event->getForm();
             $form->add('answer', EntityType::class, 
             [
-                'class' => QcmAnswer::class,            
-                'choice_label' => $data->,
+                'class' => QcmAnswer::class,    
+                'label'=> $data->getQuestion()->getQuestion(),        
+                'choice_label' => 'answer',
                 'choices'=> $data->getQuestion()->getAnswers(),
             ]);
         });

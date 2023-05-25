@@ -36,7 +36,7 @@ class Activity
     #[ORM\Column]
     private ?bool $outdoor = null;
 
-    #[ORM\Column(type: Types::BLOB)]
+    #[ORM\Column(type: Types::BLOB, nullable:true)]
     private $image = null;
 
     #[ORM\Column]
@@ -51,7 +51,7 @@ class Activity
     #[ORM\Column]
     private ?int $numberOfParticipants = null;
 
-    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: ActivityQuestion::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: ActivityQuestion::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $activityQuestions;
 
     #[ORM\Column(length: 255)]

@@ -25,7 +25,6 @@ class ActivityType extends AbstractType
             ->add('open')
             ->add('numberOfParticipants')
             ->add('owner', HiddenType::class)
-            ->add('participants', HiddenType::class)
             ->add('activityQuestions', CollectionType::class, [
                 'entry_type' => ActivityQuestionType::class,
                 'entry_options' => ['label' => false],
