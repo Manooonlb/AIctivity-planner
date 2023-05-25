@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th>Owner</th>
+                <th>Location</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Duration</th>
@@ -25,6 +26,7 @@
         {% for activity in activities %}
             <tr>
                 <td>{{ activity.owner.getUsername() }}</td>
+                <td>{{ activity.location}}</td>
                 <td>{{ activity.name }}</td>
                 <td>{{ activity.description }}</td>
                 <td>{{ activity.duration }}</td>
