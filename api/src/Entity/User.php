@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'participants')]
     private Collection $joinActivities;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: ActivityQuestion::class, orphanRemoval: true)]
+    private Collection $activityQuestions;
+
     
 
     public function __construct()
@@ -66,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->messages = new ArrayCollection();
         $this->initiateActivities = new ArrayCollection();
         $this->joinActivities = new ArrayCollection();
+        $this->activityQuestions = new ArrayCollection();
     }
 
 
@@ -281,6 +285,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeJoinActivity(Activity $joinActivity): self
     {
         $this->joinActivities->removeElement($joinActivity);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActivityQuestion>
+     */
+    public function getActivityQuestions(): Collection
+    {
+        return $this->activityQuestions;
+    }
+
+    public function addActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if (!$this->activityQuestions->contains($activityQuestion)) {
+            $this->activityQuestions->add($activityQuestion);
+            $activityQuestion->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if ($this->activityQuestions->removeElement($activityQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($activityQuestion->getOwner() === $this) {
+                $activityQuestion->setOwner(null);
+            }
+        }
 
         return $this;
     }

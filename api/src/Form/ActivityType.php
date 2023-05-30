@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Form;
-
-use App\Entity\User;
 use App\Entity\Activity;
+use App\Entity\User;
+use App\Form\ActivityQuestionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ActivityType extends AbstractType
 {
@@ -17,22 +21,24 @@ class ActivityType extends AbstractType
             ->add('name')
             ->add('description')
             ->add('duration')
-            ->add('date')
+            ->add('location')
+            ->add('date',DateType::Class, array(
+                'widget' => 'choice',
+                'years' => range(date('Y'), date('Y')+2)
+                
+              ))
             ->add('starting_time')
             ->add('outdoor')
-            ->add('image')
             ->add('open')
-            ->add('participants', EntityType::class, [
-                // looks for choices from this entity
-                'class' => User::class,
-            
-                // uses the User.username property as the visible option string
-                'choice_label' => 'username',
-            
-                // used to render a select box, check boxes or radios
-                'multiple' => true,
-                // 'expanded' => true,
-            ])
+            ->add('numberOfParticipants')
+            // ->add('owner', EntityType::class,[
+            //     'class' => User::class,
+            //     'choice_label' => 'username',
+            // ])
+            ->add('activityQuestions', CollectionType::class, [
+                'entry_type' => ActivityQuestionType::class,
+                'entry_options' => ['label' => false],
+            ]);
         ;
     }
 

@@ -8,8 +8,12 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ activity.id }}</td>
+                <th>Owner</th>
+                <td>{{ activity.Owner.getUsername }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{ activity.location }}</td>
             </tr>
             <tr>
                 <th>Name</th>
@@ -36,13 +40,14 @@
                 <td>{{ activity.outdoor ? 'Yes' : 'No' }}</td>
             </tr>
             <tr>
-                <th>Image</th>
-                <td>{{ activity.image }}</td>
-            </tr>
-            <tr>
                 <th>Open</th>
                 <td>{{ activity.open ? 'Yes' : 'No' }}</td>
             </tr>
+            <tr>
+                <th>NumberOfParticipants</th>
+                <td>{{ activity.numberOfParticipants }}</td>
+            </tr>
+            
         </tbody>
     </table>
 

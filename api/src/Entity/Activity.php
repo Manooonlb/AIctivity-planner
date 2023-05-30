@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ApiResource]
@@ -28,6 +30,7 @@ class Activity
     private ?int $duration = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\GreaterThan('today')]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
@@ -36,7 +39,7 @@ class Activity
     #[ORM\Column]
     private ?bool $outdoor = null;
 
-    #[ORM\Column(type: Types::BLOB)]
+    #[ORM\Column(type: Types::BLOB, nullable:true)]
     private $image = null;
 
     #[ORM\Column]
@@ -48,9 +51,19 @@ class Activity
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'joinActivities')]
     private Collection $participants;
 
+    #[ORM\Column]
+    private ?int $numberOfParticipants = null;
+
+    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: ActivityQuestion::class, orphanRemoval: true, cascade:['persist'])]
+    private Collection $activityQuestions;
+
+    #[ORM\Column(length: 255)]
+    private ?string $location = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->activityQuestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +203,61 @@ class Activity
         if ($this->participants->removeElement($participant)) {
             $participant->removeJoinActivity($this);
         }
+
+        return $this;
+    }
+
+
+    public function getNumberOfParticipants(): ?int
+    {
+        return $this->numberOfParticipants;
+    }
+
+    public function setNumberOfParticipants(int $numberOfParticipants): self
+    {
+        $this->numberOfParticipants = $numberOfParticipants;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActivityQuestion>
+     */
+    public function getActivityQuestions(): Collection
+    {
+        return $this->activityQuestions;
+    }
+
+    public function addActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if (!$this->activityQuestions->contains($activityQuestion)) {
+            $this->activityQuestions->add($activityQuestion);
+            $activityQuestion->setActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivityQuestion(ActivityQuestion $activityQuestion): self
+    {
+        if ($this->activityQuestions->removeElement($activityQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($activityQuestion->getActivity() === $this) {
+                $activityQuestion->setActivity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): self
+    {
+        $this->location = $location;
 
         return $this;
     }
