@@ -1,0 +1,22 @@
+.background-section {
+    background-image: url('/images/testbackground.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left;
+    min-height: 100vh;
+}
+
+.custom-button {
+    background-color: #6C6AFF ;
+    color: white;
+  }
+
+.index-app {
+    margin-top: 100px; 
+    margin-left: 250px
+}
+
+.btn-link {
+    color: #6C6AFF;
+}
+  

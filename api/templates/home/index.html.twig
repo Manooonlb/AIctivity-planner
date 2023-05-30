@@ -3,23 +3,19 @@
 {% block title %}Welcome to AIctivity Planner!{% endblock %}
 
 {% block body %}
-    <div class="row align-items-center justify-content-center justify-content-lg-between">
-        {% if is_granted('ROLE_USER') %}
-            <div class="col-lg-6 col-md-10">
-                <h1 class="header-hero-content">Hello {{ app.user.username }} ! ✅</h1>
-            </div>
-        {% else %}
-            <div class="col-lg-6 col-md-10" >
-                <div>Here is our app, please join ;)</div>
-                <div>
-                    <a href="{{ path('app_register') }}" class="btn btn-primary">Join</a>
+   <body class="background-section">
+        <div class="d-flex justify-content-center mt-5">
+            {% if is_granted('ROLE_USER') %}
+                <div class="">
+                    <h1 class="">Hello {{ app.user.username }} ! ✅</h1>
                 </div>
-            </div>
-        {% endif %}
-            <div class="col-lg-4 col-md-6 col-sm-6 col-10">
-                <div class="header-image">
-                    <img class="img-fluid wow fadeInRightBig" src="/images/illustration.jpg" alt="Illustration Image">
+            {% else %}
+               <div class="text-center index-app">
+                <h2>Wanna plan amazing activities ? 🤩 </h2>
+                <a href="{{ path('app_register') }}" class="btn custom-button mt-3">Join us !</a>
                 </div>
-            </div>
-    </div>
+            {% endif %}
+        </div>
+    </body>
+
 {% endblock %}

@@ -1,54 +1,52 @@
 {{ form_start(form) }}
-                <div class="form-group">
-					{{ form_row(form.name, {
-                        'attr': {'class': 'form-control', 'placeholder': 'name'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">
-					{{ form_row(form.description, {
-                        'attr': {'class': 'form-control', 'placeholder': 'description'}
-                        }) 
-                    }}
-				</div> 
-                 <div class="form-group">
-					{{ form_row(form.date, {
-                        'attr': {'class': 'form-control', 'placeholder': 'date'}
-                        }) 
-                    }}
-				</div> 
-				<div class="form-group">
-					{{ form_row(form.duration, {
-                        'attr': {'class': 'form-control', 'placeholder': 'duration'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">
-					{{ form_row(form.location, {
-                        'attr': {'class': 'form-control', 'placeholder': 'location'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">    
-					{{ form_row(form.starting_time, {
-                        'attr': {'class': 'form-control', 'placeholder': 'date'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">
-					{{ form_row(form.numberOfParticipants, {
-                        'attr': {'class': 'form-control', 'placeholder': 'how many friends'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">
-					{{ form_row(form.activityQuestions, {
-                        'attr': {'class': 'form-control', 'placeholder': 'questions'}
-                        }) 
-                    }}
-				</div> 
 
+{% if current_step == 1 %}
+    <div class="form-group">
+        {{ form_row(form.name, {
+            'attr': {'class': 'form-control', 'placeholder': 'name'}
+        }) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.description, {
+            'attr': {'class': 'form-control', 'placeholder': 'description'}
+        }) }}
+    </div>
+{% elseif current_step == 2 %}
+    <div class="form-group">
+        {{ form_row(form.date, {
+            'attr': {'class': 'form-control', 'placeholder': 'date'}
+        }) }}
+    </div>
+{% elseif current_step == 3 %}
+    <div class="form-group">
+        {{ form_row(form.duration, {
+            'attr': {'class': 'form-control', 'placeholder': 'duration'}
+        }) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.location, {
+            'attr': {'class': 'form-control', 'placeholder': 'location'}
+        }) }}
+    </div>
+{% elseif current_step == 4 %}
+    <div class="form-group">    
+		{{ form_row(form.starting_time, {
+            'attr': {'class': 'form-control', 'placeholder': 'date'}
+        }) }}
+	</div> 
+    <div class="form-group">
+		{{ form_row(form.numberOfParticipants, {
+            'attr': {'class': 'form-control', 'placeholder': 'how many friends'}
+        }) }}
+	</div> 
+{% elseif current_step == 5 %}
+    <div class="form-group">
+		{{ form_row(form.activityQuestions, {
+            'attr': {'class': 'form-control', 'placeholder': 'questions'}
+        })}}
+				</div> 
+{% endif %}
 
-      <button class="btn">{{ button_label|default('Save') }}</button> 
+<button class="btn custom-button">{{ button_label|default('Save') }}</button>
 
 {{ form_end(form) }}

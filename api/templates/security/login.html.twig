@@ -17,29 +17,13 @@
 	</style>
 
 	<!-- Pills navs -->
+
+<body class="background-section">
 	<div
 		class="d-flex justify-content-center">
 		<!-- Pills content -->
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
-
-				<div class="text-center mb-3">
-					<p>Sign in with:</p>
-					<button type="button" class="btn btn-secondary btn-floating mx-1">
-						<i class="fab fa-facebook-f"></i>
-					</button>
-
-					<button type="button" class="btn btn-secondary btn-floating mx-1">
-						<i class="fab fa-google"></i>
-					</button>
-
-					<button type="button" class="btn btn-secondary btn-floating mx-1">
-						<i class="fab fa-twitter"></i>
-					</button>
-
-				</div>
-
-				<p class="text-center">or:</p>
 
 				<form method="post">
 					{% if error %}
@@ -82,7 +66,7 @@
 					</div>
 
 					<!-- Submit button -->
-					<button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+					<button type="submit" class="btn custom-button btn-block mb-4">Sign in</button>
 
 					<!-- Register buttons -->
 					<div class="text-center">
@@ -94,4 +78,5 @@
 			</div>
 		</div>
 	</div>
+</body>
 {% endblock %}

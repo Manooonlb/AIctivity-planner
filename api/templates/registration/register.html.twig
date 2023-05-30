@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-
+<body class="background-section">
 	<div
 		class="d-flex justify-content-center">
 		<!-- Pills content -->
@@ -63,7 +63,7 @@
 				</div>
 
 				<div class="d-flex justify-content-center">
-					<button type="submit" class="btn btn-primary">Register</button>
+					<button type="submit" class="btn custom-button">Register</button>
 				</div>
 
 				{{ form_errors(registrationForm.birthday) }}
@@ -72,5 +72,6 @@
 			</div>
 		</div>
 	</div>
+</body>
 
 {% endblock %}

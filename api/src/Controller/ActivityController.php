@@ -46,20 +46,29 @@ class ActivityController extends AbstractController
         $activity = $activityService->getPrefiledActivity();
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
-
+    
+        $session = $request->getSession();
+        if (!$session->has('current_step')) {
+            $session->set('current_step', 1);
+        }
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $activity->setOwner($this->getUser());
             $activityRepository->save($activity, true);
-
-            return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
+    
+            // Mettez à jour la session current_step pour passer à l'étape suivante
+            $session->set('current_step', $session->get('current_step') + 1);
+    
+            return $this->redirectToRoute('app_activity_new', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('activity/new.html.twig', [
             'activity' => $activity,
-            'form' => $form,
+            'form' => $form->createView(),
+            'current_step' => $session->get('current_step'),
         ]);
     }
-
+    
     #[Route('/{id}', name: 'app_activity_show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function show(Activity $activity): Response
