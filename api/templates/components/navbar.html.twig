@@ -33,7 +33,7 @@
       
             {% if is_granted('ROLE_USER') %}
             
-                <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="#">My profile</a>
+                <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_profile_my') }}">My profile</a>
 
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_my') }}">My Activities</a>
 

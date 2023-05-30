@@ -11,7 +11,7 @@ use App\Entity\User;
 class HomeController extends AbstractController
 {
     #[Route('/app/home', name: 'app_home')]
-    #[Route('/app/', name: 'app_home')]
+    #[Route('/app/', name: 'app_home_index')]
     public function index(): Response
     {
         return $this->render('home/index.html.twig', [
