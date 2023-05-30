@@ -22,7 +22,7 @@ class ActivityController extends AbstractController
     {
         $page = $request->query->get('page',1);
         $itemsPerPage = 10 ;
-        $list = $activityRepository->findBy( ['open'=>true], ['date'=>'DESC'], $itemsPerPage, ($page - 1) * $itemsPerPage) ;
+        $list = $activityRepository->findBy( ['open'=>true], ['date'=>'ASC'], $itemsPerPage, ($page - 1) * $itemsPerPage) ;
         return $this->render('activity/index.html.twig', [
             'activities' => $list
             
