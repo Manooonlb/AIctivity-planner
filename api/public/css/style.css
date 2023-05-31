@@ -1,5 +1,6 @@
 .background-section {
-    background-image: url('/images/testbackground.png');
+    /* background-image: url('/images/testbackground.png'); */
+    background-image: url('/images/AIctivity_Background_V5.gif');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: left;
@@ -7,8 +8,11 @@
 }
 
 .custom-button {
-    background-color: #6C6AFF ;
     color: white;
+    background-color: #6C6AFF ;
+    border-radius: 10px;
+    /* background: #e0e0e0; */
+    box-shadow:  20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
   }
 
 .index-app {
