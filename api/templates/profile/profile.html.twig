@@ -15,7 +15,7 @@
                 style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                   alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
-                <h5>{{ app.user.username }}</h5>
+                <h5 id="username">{{ app.user.username }}</h5>
                 <i class="far fa-edit mb-5"></i>
               </div>
               <div class="col-md-8">
@@ -57,4 +57,20 @@
     </div>
   </section>
 </section>
+<script>
+window.addEventListener('load', function () { //emission d'un event quand la page visitée sera chargée 
+const evtSource = new EventSource("https://localhost/.well-known/mercure?topic=https://localhost/users/" + {{ app.user.id }}); //instanciation de la classe EventSource qui va écouter l'évent 
+evtSource.onmessage = function(event) { // a chaque message une méthode est déclenchée 
+  const data = JSON.parse(event.data); //convertion du resultat en obj
+  console.log(data) //affichage de l'objet 
+  const element = document.getElementById("username"); //selection de l'élèment par son id dans le DOM
+  console.log(element) //affiche l'element
+  console.log(element.innerText) //affiche la valeur de l'element 
+  element.innerText = data.username //remplace la valeur de l'element par ce que le mercure emet (new valeur)
+}
+
+});
+
+</script>
+
 {% endblock %}

@@ -20,7 +20,7 @@ class ProfileController extends AbstractController
     {
         // Get the currently logged in user
         $user = $this->getUser();
-
+        dump($user);
         // Create the form with the user's data
         $form = $this->createForm(RegistrationFormType::class, $user);
 
