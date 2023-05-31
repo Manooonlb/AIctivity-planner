@@ -1,0 +1,13 @@
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1>Edit Profile</h1>
+
+    {{ include('profile/form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_profile_my') }}">back to profile</a>
+
+    {{ include('profile/delete.html.twig') }}
+  
+{% endblock %}
