@@ -37,11 +37,54 @@
 				console.log(JSON.parse(event.data));
 				const element = document.getElementById("message-box");
 				console.log(element);
+
+				
 				const messageContainer = document.createElement("span");
-				messageContainer.innerText = JSON.parse(event.data).content;
+				messageContainer.innerHTML = JSON.parse(event.data).content;
 				console.log(messageContainer);
-				element.appendChild(messageContainer);
+
+			
+				const messageReceived = document.getElementsByClassName("received");
+				const clone = messageReceived[0].cloneNode(true);
+				console.log(messageReceived[0], clone);
+
+				clone.getElementsByTagName("p")[0].innerText = JSON.parse(event.data).content;
+				element.appendChild(clone);
+				console.log(clone.getElementsByTagName("p")[0])
+
+				 // Écouter l'événement click du bouton Send
+  				document.getElementById('button-addon2').addEventListener('click', sendMessage);
+				
+				  // Fonction pour envoyer un message
+				function sendMessage() {
+					const message = inputMessage.value; // Récupérer le texte du champ d'entrée
+					if (message) {
+					const receivedMessageElement = createMessageElement(message, 'received');
+					messageBox.appendChild(receivedMessageElement);
+					inputMessage.value = ''; // Effacer le champ d'entrée après l'envoi
+					messageBox.scrollTop = messageBox.scrollHeight; // Faire défiler vers le bas pour afficher le nouveau message
+					}
+				}
+				
+				const messageSent = document.getElementsByClassName("sent");
+				const clone = messageSent[0].cloneNode(true);
+				console.log(messageSent[0], clone);
+
+				clone.getElementsByTagName("p")[0].innerText = JSON.parse(event.data).content;
+				element.appendChild(clone);
+				console.log(clone.getElementsByTagName("p")[0])
+
+				//const bulle = document.createElement("div");
+				//const idBulle = document.querySelector("#message");
+				
+				//document.idBulle.appendChild(bulle);
+				//bulle.setAttribute("id","bulle");
+				//document.idBulle.appendChild(messageContainer);
+
+
 				}
 			</script>
+
+			
 		</body>
 	</html>

@@ -22,6 +22,31 @@ class MessageController extends AbstractController
         ]);
     }
 
+    #[Route('app/send', name: 'app_send')]
+    #[IsGranted('ROLE_USER')]
+    public function send(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $message = new Message();
+        $form = $this->createForm(MessageType::class, $message);
+        $form ->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) 
+        {
+            $message->setSent($this->getUser());
+            $message->setIsRead(false);
+            $message->setCreatedAt(new \DateTimeImmutable());
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            $this->addFlash('message','Good news! Message sent');
+            return $this->redirectToRoute("app_received");
+        }
+
+        return $this->render('message/send.html.twig', [
+            "messageForm"=> $form->createView(),
+        ]);
+    }
+
     #[Route('app/received', name: 'app_received')]
     #[IsGranted('ROLE_USER')]
     public function received(): Response
