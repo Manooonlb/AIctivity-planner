@@ -33,6 +33,15 @@ class CreateMessageController extends AbstractController
 
         $this->hub->publish($update);
 
+        $update = new Update(
+            'https://localhost/users/'.$data->getSent()->getId() . "/messages",
+            $this->serializer->serialize($data, 'json')        
+        );
+
+
+        $this->hub->publish($update);
+
+
         return $data;
     }
     

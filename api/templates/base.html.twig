@@ -35,53 +35,28 @@
 				const eventSource = new EventSource("{{ mercure('https://localhost/users/3/messages')|escape('js') }}");
 				eventSource.onmessage = event => { // Will be called every time an update is published by the server
 				console.log(JSON.parse(event.data));
+				const data = JSON.parse(event.data);
 				const element = document.getElementById("message-box");
 				console.log(element);
-
 				
-				const messageContainer = document.createElement("span");
-				messageContainer.innerHTML = JSON.parse(event.data).content;
-				console.log(messageContainer);
+				if ({{app.user}} && {{app.user.id}}) {
+				const uri = '/users/' + {{app.user.id}};
+				console.log(uri);
+}
+				//const username = {{app.user.username}};
 
-			
-				const messageReceived = document.getElementsByClassName("received");
-				const clone = messageReceived[0].cloneNode(true);
-				console.log(messageReceived[0], clone);
-
-				clone.getElementsByTagName("p")[0].innerText = JSON.parse(event.data).content;
-				element.appendChild(clone);
-				console.log(clone.getElementsByTagName("p")[0])
-
-				 // Écouter l'événement click du bouton Send
-  				document.getElementById('button-addon2').addEventListener('click', sendMessage);
-				
-				  // Fonction pour envoyer un message
-				function sendMessage() {
-					const message = inputMessage.value; // Récupérer le texte du champ d'entrée
-					if (message) {
-					const receivedMessageElement = createMessageElement(message, 'received');
-					messageBox.appendChild(receivedMessageElement);
-					inputMessage.value = ''; // Effacer le champ d'entrée après l'envoi
-					messageBox.scrollTop = messageBox.scrollHeight; // Faire défiler vers le bas pour afficher le nouveau message
-					}
-				}
-				
-				const messageSent = document.getElementsByClassName("sent");
-				const clone = messageSent[0].cloneNode(true);
-				console.log(messageSent[0], clone);
-
-				clone.getElementsByTagName("p")[0].innerText = JSON.parse(event.data).content;
-				element.appendChild(clone);
-				console.log(clone.getElementsByTagName("p")[0])
-
-				//const bulle = document.createElement("div");
-				//const idBulle = document.querySelector("#message");
-				
-				//document.idBulle.appendChild(bulle);
-				//bulle.setAttribute("id","bulle");
-				//document.idBulle.appendChild(messageContainer);
-
-
+				const template = document.createElement('template');
+				template.innerHTML = ` <div class="d-flex justify-content-between">
+			<p class="small mb-1"></p>
+            </div>
+            <div class="d-flex flex-row justify-content-${data.sent === uri ? "end":"start" } received">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                alt="avatar 1" style="width: 45px; height: 100%;">
+              <div>
+                <p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7;">${data.content}</p>
+              </div>
+            </div>`;
+			element.appendChild(template.content);
 				}
 			</script>
 
