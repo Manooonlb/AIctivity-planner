@@ -35,7 +35,7 @@ class CreateMessageController extends AbstractController
 
         $update = new Update(
             'https://localhost/users/'.$data->getSent()->getId() . "/messages",
-            $this->serializer->serialize($data, 'json')        
+            $this->serializer->serialize($data, 'json',[])       
         );
 
 

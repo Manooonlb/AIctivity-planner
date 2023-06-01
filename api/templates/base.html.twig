@@ -32,7 +32,8 @@
 			<!-- MDB PLUGINS -->
 			<script type="text/javascript" src="/plugins/js/all.min.js"></script>
 			<script>
-				const eventSource = new EventSource("{{ mercure('https://localhost/users/3/messages')|escape('js') }}");
+				const eventSource = new EventSource("{{ mercure('https://localhost/users/' ~ app.user.id ~ '/messages')|escape('js') }}");
+				console.log(eventSource);
 				eventSource.onmessage = event => { // Will be called every time an update is published by the server
 				console.log(JSON.parse(event.data));
 				const data = JSON.parse(event.data);
@@ -43,10 +44,9 @@
 				console.log(uri);
 				
 				
-
 				const template = document.createElement('template');
 				template.innerHTML = ` <div class="d-flex justify-content-between">
-			<p class="small mb-1"></p>
+			<p class="small mb-1">${data.received === username ?  : }</p>
             </div>
             <div class="d-flex flex-row justify-content-${data.sent === uri ? "end":"start" } received">
               <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
