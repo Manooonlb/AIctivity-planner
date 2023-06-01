@@ -3,12 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use App\Controller\CreateMessageController;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ApiResource(mercure:true)]
+#[ApiResource(mercure:true, operations: [
+    new Get(),
+    new Post(
+        controller: CreateMessageController::class
+    )
+])]
+#[ORM\HasLifecycleCallbacks()]
+
 class Message
 {
     #[ORM\Id]
@@ -19,19 +29,28 @@ class Message
     #[ORM\Column(length: 3000, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
-    private ?User $author = null;
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $date = null;
+    #[ORM\Column(type: 'boolean', options: ['default' => 'false'])]
+    private ?bool $isRead = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'received')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Conversation $conversation = null;
+    private ?User $recipient = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sended')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
+    private ?User $sent = null;
+
+    #[ORM\PrePersist]
+    public function onCreate(): void
+    {
+        $this->setCreatedAt(new \DateTimeImmutable());
+    }
 
     public function getId(): ?int
     {
@@ -50,50 +69,62 @@ class Message
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function getTitle(): ?string
     {
-        return $this->author;
+        return $this->title;
     }
 
-    public function setAuthor(?User $author): self
+    public function setTitle(string $title): self
     {
-        $this->author = $author;
+        $this->title = $title;
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function isIsRead(): ?bool
     {
-        return $this->date;
+        return $this->isRead;
     }
 
-    public function setDate(?\DateTimeInterface $date): self
+    public function setIsRead(bool $isRead): self
     {
-        $this->date = $date;
+        $this->isRead = $isRead;
 
         return $this;
     }
 
-    public function getConversation(): ?Conversation
+    public function getRecipient(): ?User
     {
-        return $this->conversation;
+        return $this->recipient;
     }
 
-    public function setConversation(?Conversation $conversation): self
+    public function setRecipient(?User $recipient): self
     {
-        $this->conversation = $conversation;
+        $this->recipient = $recipient;
 
         return $this;
     }
 
-    public function getOwner(): ?User
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->owner;
+        return $this->createdAt;
     }
 
-    public function setOwner(?User $owner): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
-        $this->owner = $owner;
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getSent(): ?User
+    {
+        return $this->sent;
+    }
+
+    public function setSent(?User $sent): self
+    {
+        $this->sent = $sent;
 
         return $this;
     }
