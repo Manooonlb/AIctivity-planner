@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Message;
-use App\Form\MessageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
