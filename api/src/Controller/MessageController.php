@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Activity;
 use App\Entity\Message;
 use App\Form\MessageType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,37 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MessageController extends AbstractController
 {
-    #[Route('app/message', name: 'app_message')]
+    #[Route('app/activity/{id}/contact', name: 'app_message')]
     #[IsGranted('ROLE_USER')]
-    public function index(): Response
+   
+    public function index(Activity $activity): Response
     {
         return $this->render('message/index.html.twig', [
-            'controller_name' => 'MessageController',
-        ]);
-    }
-
-    #[Route('app/send', name: 'app_send')]
-    #[IsGranted('ROLE_USER')]
-    public function send(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $message = new Message();
-        $form = $this->createForm(MessageType::class, $message);
-        $form ->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) 
-        {
-            $message->setSent($this->getUser());
-            $message->setIsRead(false);
-            $message->setCreatedAt(new \DateTimeImmutable());
-            $entityManager->persist($message);
-            $entityManager->flush();
-
-            $this->addFlash('message','Good news! Message sent');
-            return $this->redirectToRoute("app_received");
-        }
-
-        return $this->render('message/send.html.twig', [
-            "messageForm"=> $form->createView(),
+            'activity' => $activity,
         ]);
     }
 

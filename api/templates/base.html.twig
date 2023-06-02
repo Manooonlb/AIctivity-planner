@@ -59,34 +59,22 @@
             </div>`;
 			element.appendChild(template.content);
 				}
-						function sendMessage() {
-  var inputField = document.getElementById("message-input");
-  var message = inputField.value;
+		
+		{% if activity is defined %}
+		function sendMessage() {
+			var inputField = document.getElementById("message-input");
+			var message = inputField.value;
+			const messageData = {
+				content : message,
+				recipient : '/users/' +  {{activity.owner.id}},
+				sent : '/users/' + {{app.user.id}}
+			}
+			POST/messages
+			console.log(messageData);
 
-  // Get the username and date
-  var username = "{{ app.user.username }}"; // Replace with the actual username value
-  var currentDate = new Date().toUTCString();
+		}
+		{% endif %}
 
-  // Example: Append the message and other data to the message-box
-  var messageBox = document.getElementById("message-box");
-  var template = document.createElement('template');
-  template.innerHTML = `
-    <div class="d-flex justify-content-between">
-      <p class="small mb-1">${username}</p>
-      <p class="small mb-1 text-muted">${currentDate}</p>
-    </div>
-    <div class="d-flex flex-row justify-content-end received">
-      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
-      <div>
-        <p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7;">${message}</p>
-      </div>
-    </div>`;
-
-  messageBox.appendChild(template.content);
-console.log(uri);
-  // Clear the input field after sending the message
-  inputField.value = "";
-}
 
 			</script>
 
