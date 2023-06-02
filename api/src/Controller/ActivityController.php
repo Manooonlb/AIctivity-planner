@@ -39,6 +39,36 @@ class ActivityController extends AbstractController
         ]);
     }
 
+    // #[Route('/new', name: 'app_activity_new', methods: ['GET', 'POST'])]
+    // #[IsGranted('ROLE_USER')]
+    // public function new(Request $request, ActivityService $activityService, ActivityRepository $activityRepository, QcmRepository $qcmRepository): Response
+    // {
+    //     $activity = $activityService->getPrefiledActivity();
+    //     $form = $this->createForm(ActivityType::class, $activity);
+    //     $form->handleRequest($request);
+    
+    //     $session = $request->getSession();
+    //     if (!$session->has('current_step')) {
+    //         $session->set('current_step', 1);
+    //     }
+    
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $activity->setOwner($this->getUser());
+    //         $activityRepository->save($activity, true);
+    
+    //         // Mettez à jour la session current_step pour passer à l'étape suivante
+    //         $session->set('current_step', $session->get('current_step') + 1);
+    
+    //         return $this->redirectToRoute('app_activity_new', [], Response::HTTP_SEE_OTHER);
+    //     }
+    
+    //     return $this->render('activity/new.html.twig', [
+    //         'activity' => $activity,
+    //         'form' => $form->createView(),
+    //         'current_step' => $session->get('current_step'),
+    //     ]);
+    // }
+
     #[Route('/new', name: 'app_activity_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, ActivityService $activityService, ActivityRepository $activityRepository, QcmRepository $qcmRepository): Response
@@ -48,18 +78,18 @@ class ActivityController extends AbstractController
         $form->handleRequest($request);
     
         $session = $request->getSession();
-        if (!$session->has('current_step')) {
-            $session->set('current_step', 1);
-        }
-    
         if ($form->isSubmitted() && $form->isValid()) {
             $activity->setOwner($this->getUser());
             $activityRepository->save($activity, true);
     
-            // Mettez à jour la session current_step pour passer à l'étape suivante
-            $session->set('current_step', $session->get('current_step') + 1);
+            // Réinitialiser la session pour recommencer depuis l'étape 1
+            $session->remove('current_step');
     
             return $this->redirectToRoute('app_activity_new', [], Response::HTTP_SEE_OTHER);
+        }
+    
+        if (!$session->has('current_step')) {
+            $session->set('current_step', 1);
         }
     
         return $this->render('activity/new.html.twig', [
