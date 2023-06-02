@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\CreateMessageController;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource(mercure:true, operations: [
@@ -23,26 +24,33 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['message_notification'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 3000, nullable: true)]
+    #[Groups(['message_notification'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['message_notification'])]
     private ?string $title = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => 'false'])]
+    #[Groups(['message_notification'])]
     private ?bool $isRead = null;
 
     #[ORM\ManyToOne(inversedBy: 'received')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['message_notification'])]
     private ?User $recipient = null;
 
     #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['message_notification'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'sended')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['message_notification'])]
     private ?User $sent = null;
 
     #[ORM\PrePersist]

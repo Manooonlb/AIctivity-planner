@@ -42,13 +42,15 @@
 
 				const uri = '/users/' + {{app.user.id}};
 				console.log(uri);
-				
+				const date = (new Date(data.createdAt)).toUTCString();
+				console.log(date);
 				
 				const template = document.createElement('template');
 				template.innerHTML = ` <div class="d-flex justify-content-between">
-			<p class="small mb-1">${data.received === username ?  : }</p>
+			<p class="small mb-1">${data.sent.username}</p>
+			<p class="small mb-1 text-muted">${date}</p>
             </div>
-            <div class="d-flex flex-row justify-content-${data.sent === uri ? "end":"start" } received">
+            <div class="d-flex flex-row justify-content-${data.sent.id === uri ? "start":"end" } received">
               <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
                 alt="avatar 1" style="width: 45px; height: 100%;">
               <div>

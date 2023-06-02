@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\VarDumper\Cloner\Data;
 
@@ -25,9 +26,13 @@ class CreateMessageController extends AbstractController
     {
         $this->em->persist($data);
         $this->em->flush();
+        $context = (new ObjectNormalizerContextBuilder())
+        ->withGroups('message_notification')
+        ->toArray();
+
         $update = new Update(
             'https://localhost/users/'.$data->getRecipient()->getId() . "/messages",
-            $this->serializer->serialize($data, 'json')        
+            $this->serializer->serialize($data, 'json',$context)        
         );
 
 
@@ -35,7 +40,7 @@ class CreateMessageController extends AbstractController
 
         $update = new Update(
             'https://localhost/users/'.$data->getSent()->getId() . "/messages",
-            $this->serializer->serialize($data, 'json',[])       
+            $this->serializer->serialize($data, 'json',$context)       
         );
 
 
