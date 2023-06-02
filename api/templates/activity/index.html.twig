@@ -19,7 +19,7 @@
                 <th>Image</th>
                 <th>Open</th>
                 <th>NumberOfParticipants</th>
-                <th>actions</th>
+                <th>Wanna join ?</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +36,8 @@
                 <td>{{ activity.image }}</td>
                 <td>{{ activity.open ? 'Yes' : 'No' }}</td>
                 <td>{{ activity.numberOfParticipants }}</td>
+                
+                <td><a href="{{ path('app_message', {'id': activity.id})}}">contact</a></td>
                 {% if app.user.getUsername == activity.owner.getUsername %}
                 <td>
                     <a href="{{ path('app_activity_show', {'id': activity.id}) }}">show</a>

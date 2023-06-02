@@ -3,35 +3,57 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use App\Controller\CreateMessageController;
 use App\Repository\MessageRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ApiResource(mercure:true)]
+#[ApiResource(mercure:true, operations: [
+    new Get(),
+    new Post(
+        controller: CreateMessageController::class
+    )
+])]
+#[ORM\HasLifecycleCallbacks()]
+
 class Message
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['message_notification'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 3000, nullable: true)]
+    #[Groups(['message_notification'])]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
-    private ?User $author = null;
+    #[ORM\Column(type: 'boolean', options: ['default' => 'false'], nullable: true)]
+    #[Groups(['message_notification'])]
+    private ?bool $isRead = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $date = null;
-
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'received')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Conversation $conversation = null;
+    #[Groups(['message_notification'])]
+    private ?User $recipient = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['message_notification'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sended')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
+    #[Groups(['message_notification'])]
+    private ?User $sent = null;
+
+    #[ORM\PrePersist]
+    public function onCreate(): void
+    {
+        $this->setCreatedAt(new \DateTimeImmutable());
+    }
 
     public function getId(): ?int
     {
@@ -50,50 +72,50 @@ class Message
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function isIsRead(): ?bool
     {
-        return $this->author;
+        return $this->isRead;
     }
 
-    public function setAuthor(?User $author): self
+    public function setIsRead(bool $isRead): self
     {
-        $this->author = $author;
+        $this->isRead = $isRead;
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getRecipient(): ?User
     {
-        return $this->date;
+        return $this->recipient;
     }
 
-    public function setDate(?\DateTimeInterface $date): self
+    public function setRecipient(?User $recipient): self
     {
-        $this->date = $date;
+        $this->recipient = $recipient;
 
         return $this;
     }
 
-    public function getConversation(): ?Conversation
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->conversation;
+        return $this->createdAt;
     }
 
-    public function setConversation(?Conversation $conversation): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
-        $this->conversation = $conversation;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getOwner(): ?User
+    public function getSent(): ?User
     {
-        return $this->owner;
+        return $this->sent;
     }
 
-    public function setOwner(?User $owner): self
+    public function setSent(?User $sent): self
     {
-        $this->owner = $owner;
+        $this->sent = $sent;
 
         return $this;
     }

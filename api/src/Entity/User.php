@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -23,9 +24,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['message_notification'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['message_notification'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -45,12 +48,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $isVerified = false;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['message_notification'])]
     private ?string $username = null;
-    #[ORM\ManyToMany(targetEntity: Conversation::class, inversedBy: 'users')]
-    private Collection $conversations;
-
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Message::class, orphanRemoval: true)]
-    private Collection $messages;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Activity::class)]
     private Collection $initiateActivities;
@@ -61,15 +60,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: ActivityQuestion::class, orphanRemoval: true)]
     private Collection $activityQuestions;
 
+    #[ORM\OneToMany(mappedBy: 'recipient', targetEntity: Message::class)]
+    private Collection $received;
+
+    #[ORM\OneToMany(mappedBy: 'sent', targetEntity: Message::class)]
+    private Collection $sended;
+
     
 
     public function __construct()
     {
-        $this->conversations = new ArrayCollection();
-        $this->messages = new ArrayCollection();
         $this->initiateActivities = new ArrayCollection();
         $this->joinActivities = new ArrayCollection();
         $this->activityQuestions = new ArrayCollection();
+        $this->received = new ArrayCollection();
+        $this->sended = new ArrayCollection();
     }
 
 
@@ -181,60 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    /**
-     * @return Collection<int, Conversation>
-     */
-    public function getConversations(): Collection
-    {
-        return $this->conversations;
-    }
-
-    public function addConversation(Conversation $conversation): self
-    {
-        if (!$this->conversations->contains($conversation)) {
-            $this->conversations->add($conversation);
-        }
-
-        return $this;
-    }
-
-    public function removeConversation(Conversation $conversation): self
-    {
-        $this->conversations->removeElement($conversation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
-    }
-
-    public function addMessage(Message $message): self
-    {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessage(Message $message): self
-    {
-        if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getOwner() === $this) {
-                $message->setOwner(null);
-            }
-        }
-
-        return $this;
-    }
-
+   
     /**
      * @return Collection<int, Activity>
      */
@@ -313,6 +265,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($activityQuestion->getOwner() === $this) {
                 $activityQuestion->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getReceived(): Collection
+    {
+        return $this->received;
+    }
+
+    public function addReceived(Message $received): self
+    {
+        if (!$this->received->contains($received)) {
+            $this->received->add($received);
+            $received->setRecipient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceived(Message $received): self
+    {
+        if ($this->received->removeElement($received)) {
+            // set the owning side to null (unless already changed)
+            if ($received->getRecipient() === $this) {
+                $received->setRecipient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getSended(): Collection
+    {
+        return $this->sended;
+    }
+
+    public function addSended(Message $sended): self
+    {
+        if (!$this->sended->contains($sended)) {
+            $this->sended->add($sended);
+            $sended->setSent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSended(Message $sended): self
+    {
+        if ($this->sended->removeElement($sended)) {
+            // set the owning side to null (unless already changed)
+            if ($sended->getSent() === $this) {
+                $sended->setSent(null);
             }
         }
 
