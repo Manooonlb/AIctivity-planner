@@ -51,6 +51,9 @@
 
 {{ form_end(form) }} #}
 
+
+
+
 {# {{ form_start(form) }}
 
 <div id="step1" {% if current_step != 1 %}style="display: none;"{% endif %}>
@@ -74,6 +77,9 @@
             'attr': {'class': 'form-control', 'placeholder': 'date'},
             'label': 'Date'
         }) }}
+
+
+
         {% if form.date.vars.errors|length > 0 %}
             {% for error in form.date.vars.errors %}
                 <div class="alert alert-danger">{{ error.message }}</div>
@@ -168,6 +174,9 @@
 
     // Afficher l'étape actuelle lors du chargement de la page
     showCurrentStep();
+
+
+
 </script> #}
 
 {{ form_start(form) }}
@@ -262,3 +271,45 @@
 
 
 {{ form_end(form) }}
+
+
+<script>
+    var currentStep = {{ current_step }};
+
+    // Afficher l'étape actuelle
+    function showCurrentStep() {
+        for (var i = 1; i <= 5; i++) {
+            var step = document.getElementById('step' + i);
+            var nextButton = document.getElementById('next-button');
+            var saveButton = document.getElementById('save-button');
+
+            if (i === currentStep) {
+                step.style.display = 'block';
+
+                if (i === 5) {
+                    nextButton.style.display = 'none';
+                    saveButton.style.display = 'block';
+                } else {
+                    nextButton.style.display = 'block';
+                    saveButton.style.display = 'none';
+                }
+            } else {
+                step.style.display = 'none';
+            }
+        }
+    }
+
+    // Passer à l'étape suivante
+    function nextStep() {
+        currentStep++;
+        showCurrentStep();
+    }
+
+    // Écouter le clic sur le bouton "Next"
+    document.getElementById('next-button').addEventListener('click', nextStep);
+
+    // Appeler showCurrentStep() au chargement de la page
+    showCurrentStep();
+</script>
+
+
