@@ -7,7 +7,9 @@
         <div class="d-flex justify-content-center mt-5">
             {% if is_granted('ROLE_USER') %}
                 <div class="text-center index-app">
+
                     <h1>Hello {{ app.user.username }} 👋</h1>
+
                     <a href="{{ path('app_activity_new') }}" class="btn custom-button mt-3">START ACTIVITY !</a>
                 </div>
             {% else %}

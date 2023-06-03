@@ -17,13 +17,37 @@
 		<link rel="stylesheet" href="/css/mdb.min.css"/>
 		<!-- MDB PLUGINS -->
 		{# <link
-				rel="stylesheet" href="/css/mdb-plugins.min.css"/> #}
+								rel="stylesheet" href="/css/mdb-plugins.min.css"/> #}
 		<link
 		rel="stylesheet" href="/plugins/css/all.min.css"/> <!-- Custom styles -->
 		<link rel="stylesheet" href="/css/style.css"/>
 	</head>
 	<body>
 		{% include "components/navbar.html.twig" %}
+
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+			Launch demo modal
+		</button>
+
+		<!-- Modal -->
+		<div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="false" data-mdb-keyboard="true">
+			<div class="modal-dialog modal-side modal-bottom-right ">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+						<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">...</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+							Close
+						</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="container"> {% block body %}{% endblock %}
 			</div>
 
@@ -32,79 +56,67 @@
 			<!-- MDB PLUGINS -->
 			<script type="text/javascript" src="/plugins/js/all.min.js"></script>
 
-			{% if is_granted('ROLE_USER') %}
-			<script> 
-				var sender  ;
-				const eventSource = new EventSource("{{ mercure('https://localhost/users/' ~ app.user.id ~ '/messages')|escape('js') }}");
-				console.log(eventSource);
-				eventSource.onmessage =  event => { // Will be called every time an update is published by the server
-						console.log(JSON.parse(event.data));
-						data = JSON.parse(event.data);
-						sender = data.sent.id;
-						
-						const element = document.getElementById("message-box");
-						console.log(element);
+	{% if is_granted('ROLE_USER') %}
+		<script>
+			var sender;
+			const eventSource = new EventSource("{{ mercure('https://localhost/users/' ~ app.user.id ~ '/messages')|escape('js') }}");
+			console.log(eventSource);
+			eventSource.onmessage = event => { // Will be called every time an update is published by the server
+				console.log(JSON.parse(event.data));
+				data = JSON.parse(event.data);
+				sender = data.sent.id;
 
-						const uri = {{app.user.id}};
-						console.log(uri);
-						const date = (new Date(data.createdAt)).toUTCString();
-						console.log(date);
-						
-						const template = document.createElement('template');
-						template.innerHTML = ` <div class="d-flex justify-content-between">
-					<p class="small mb-1">${data.sent.username}</p>
-					<p class="small mb-1 text-muted">${date}</p>
-					</div>
-					<div class="d-flex flex-row justify-content-${sender === uri ? "end":"start" } received">
-					<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
-						alt="avatar 1" style="width: 45px; height: 100%;">
-					<div>
-						<p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7;">${data.content}</p>
-					</div>
-					</div>`;
-					element.appendChild(template.content);
+				const element = document.getElementById("message-box");
+				console.log(element);
+
+				const uri = {{ app.user.id }};
+				console.log(uri);
+				const date = (new Date(data.createdAt)).toUTCString();
+				console.log(date);
+
+				const template = document.createElement('template');
+				template.innerHTML = ` <div class="d-flex justify-content-between">
+				<p class="small mb-1">${data.sent.username}</p>
+				<p class="small mb-1 text-muted">${date}</p></div>
+				<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"} received">
+				<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+				alt="avatar 1" style="width: 45px; height: 100%;">
+				<div><p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: "#A7D6D0" ;">${data.content}</p></div>
+				</div>`;
+				element.appendChild(template.content);
 				}
-				
-		
+
+
 		{% if activity is defined %}
 
-		function sendMessage() {
+			function sendMessage() {
 			var inputField = document.getElementById("message-input");
 			var message = inputField.value;
-		console.log({{activity.owner.id}});
-		console.log({{app.user.id}});
-		console.log(sender);
-		{% if activity.owner.id is same as (app.user.id) %}
-		messageTarget = sender;
-		{% else %}
-		messageTarget = {{activity.owner.id}};
-		{% endif %}
-		const messageData = {
+			console.log({{ activity.owner.id }});
+			console.log({{ app.user.id }});
+			console.log(sender);{% if activity.owner.id is same as (app.user.id) %}messageTarget = sender;
+			{% else %}
+			messageTarget = {{ activity.owner.id }};{% endif %}const messageData = {
 			content: message,
 			recipient: '/users/' + messageTarget,
-			sent: '/users/' + {{app.user.id}}
-		}
+			sent: '/users/' + {{ app.user.id }}
+			}
 
-		fetch('https://localhost/messages', {
+			fetch('https://localhost/messages', {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(messageData)
-		});
-		
-	}
-		
+			});
 
-		document.getElementById("button-addon2").addEventListener("click", sendMessage);
-
-			
-		{% endif %}
+			}
 
 
-			</script>
-		{% endif %}
-				
-		</body>
-	</html>
+		document.getElementById("button-addon2").addEventListener("click", sendMessage);{% endif %}
+	</script>
+	{% endif %}
+
+	</body>
+</html>

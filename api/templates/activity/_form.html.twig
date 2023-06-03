@@ -52,8 +52,7 @@
 {{ form_end(form) }} #}
 
 
-
-{{ form_start(form) }}
+{# {{ form_start(form) }}
 
 <div id="step1" {% if current_step != 1 %}style="display: none;"{% endif %}>
     <div class="form-group">
@@ -76,6 +75,12 @@
             'attr': {'class': 'form-control', 'placeholder': 'date'},
             'label': 'Date'
         }) }}
+
+        {% if form.date.vars.errors|length > 0 %}
+            {% for error in form.date.vars.errors %}
+                <div class="alert alert-danger">{{ error.message }}</div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 
@@ -165,4 +170,138 @@
 
     // Afficher l'étape actuelle lors du chargement de la page
     showCurrentStep();
+
+</script> #}
+
+{{ form_start(form) }}
+
+<ul class="stepper" data-mdb-stepper="stepper">
+  <li class="stepper-step stepper-active">
+    <div class="stepper-head">
+      <span class="stepper-head-icon">1</span>
+      <span class="stepper-head-text">step1</span>
+    </div>
+    <div class="stepper-content py-3">
+            {{ form_row(form.name, {
+                'attr': {'class': 'form-control', 'placeholder': 'name'},
+                'label': 'Name'
+            }) }}
+    
+            {{ form_row(form.description, {
+                'attr': {'class': 'form-control', 'placeholder': 'description'},
+                'label': 'Description'
+            }) }}
+    </div>
+  </li>
+  <li class="stepper-step">
+    <div class="stepper-head">
+      <span class="stepper-head-icon">2</span>
+      <span class="stepper-head-text">step2</span>
+    </div>
+    <div class="stepper-content py-3">
+        {{ form_row(form.date, {
+            'attr': {'class': 'form-control', 'placeholder': 'date'},
+            'label': 'Date'
+        }) }}
+        {% if form.date.vars.errors|length > 0 %}
+            {% for error in form.date.vars.errors %}
+                <div class="alert alert-danger">{{ error.message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+  </li>
+  <li class="stepper-step">
+    <div class="stepper-head">
+      <span class="stepper-head-icon">3</span>
+      <span class="stepper-head-text">step3</span>
+    </div>
+    <div class="stepper-content py-3">
+        {{ form_row(form.duration, {
+            'attr': {'class': 'form-control', 'placeholder': 'duration'},
+            'label': 'Duration'
+        }) }}
+        {{ form_row(form.location, {
+            'attr': {'class': 'form-control', 'placeholder': 'location'},
+            'label': 'Location'
+        }) }}  
+        {{ form_row(form.starting_time, {
+            'attr': {'class': 'form-control', 'placeholder': 'date'},
+            'label': 'Starting Time'
+        }) }}
+        {{ form_row(form.outdoor) }}
+    </div>
+  </li>
+
+    <li class="stepper-step">
+    <div class="stepper-head">
+      <span class="stepper-head-icon">4</span>
+      <span class="stepper-head-text">step4</span>
+    </div>
+    <div class="stepper-content py-3">
+        {{ form_row(form.numberOfParticipants, {
+            'attr': {'class': 'form-control', 'placeholder': 'how many friends'},
+            'label': 'Number of Participants'
+        }) }}
+        {{ form_row(form.open) }}
+    </div>
+  </li>
+
+    <li class="stepper-step">
+    <div class="stepper-head">
+      <span class="stepper-head-icon">5</span>
+      <span class="stepper-head-text">step5</span>
+    </div>
+    <div class="stepper-content py-3">
+        {{ form_row(form.activityQuestions, {
+            'attr': {'class': 'form-control', 'placeholder': 'questions'},
+            'label': 'Activity Questions'
+        })}}
+    <button class="btn custom-button" id="save-button">Save</button>
+    </div>
+  </li>
+
+</ul>
+
+
+
+{{ form_end(form) }}
+
+<script>
+    var currentStep = {{ current_step }};
+
+    // Afficher l'étape actuelle
+    function showCurrentStep() {
+        for (var i = 1; i <= 5; i++) {
+            var step = document.getElementById('step' + i);
+            var nextButton = document.getElementById('next-button');
+            var saveButton = document.getElementById('save-button');
+
+            if (i === currentStep) {
+                step.style.display = 'block';
+
+                if (i === 5) {
+                    nextButton.style.display = 'none';
+                    saveButton.style.display = 'block';
+                } else {
+                    nextButton.style.display = 'block';
+                    saveButton.style.display = 'none';
+                }
+            } else {
+                step.style.display = 'none';
+            }
+        }
+    }
+
+    // Passer à l'étape suivante
+    function nextStep() {
+        currentStep++;
+        showCurrentStep();
+    }
+
+    // Écouter le clic sur le bouton "Next"
+    document.getElementById('next-button').addEventListener('click', nextStep);
+
+    // Appeler showCurrentStep() au chargement de la page
+    showCurrentStep();
 </script>
+
