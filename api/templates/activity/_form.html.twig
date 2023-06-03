@@ -51,6 +51,7 @@
 
 {{ form_end(form) }} #}
 
+
 {# {{ form_start(form) }}
 
 <div id="step1" {% if current_step != 1 %}style="display: none;"{% endif %}>
@@ -74,6 +75,7 @@
             'attr': {'class': 'form-control', 'placeholder': 'date'},
             'label': 'Date'
         }) }}
+
         {% if form.date.vars.errors|length > 0 %}
             {% for error in form.date.vars.errors %}
                 <div class="alert alert-danger">{{ error.message }}</div>
@@ -168,6 +170,7 @@
 
     // Afficher l'étape actuelle lors du chargement de la page
     showCurrentStep();
+
 </script> #}
 
 {{ form_start(form) }}
@@ -301,3 +304,4 @@
     // Appeler showCurrentStep() au chargement de la page
     showCurrentStep();
 </script>
+
