@@ -24,30 +24,6 @@
 	</head>
 	<body>
 		{% include "components/navbar.html.twig" %}
-
-		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
-			Launch demo modal
-		</button>
-
-		<!-- Modal -->
-		<div class="modal right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="false" data-mdb-keyboard="true">
-			<div class="modal-dialog modal-side modal-bottom-right ">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-						<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">...</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
-							Close
-						</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
 		<div class="container"> {% block body %}{% endblock %}
 			</div>
 
@@ -75,47 +51,58 @@
 				console.log(date);
 
 				const template = document.createElement('template');
-				template.innerHTML = ` <div class="d-flex justify-content-between">
-				<p class="small mb-1">${data.sent.username}</p>
-				<p class="small mb-1 text-muted">${date}</p></div>
-				<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"} received">
-				<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
-				alt="avatar 1" style="width: 45px; height: 100%;">
-				<div><p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: "#A7D6D0" ;">${data.content}</p></div>
-				</div>`;
+				template.innerHTML = `<li class="d-flex justify-content-between mb-4">
+						<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar" class="rounded-circle d-flex align-self-${sender === uri ? "end" : "start"} me-3 shadow-1-strong" width="60">
+						<div class="card mask-custom">
+							<div class="card-header d-flex justify-content-between p-3" style="border-bottom: 1px solid rgba(255,255,255,.3);">
+								<p class="fw-bold mb-0">${data.sent.username}</p>
+								<p class="text-light small mb-0">
+									<i class="far fa-clock"></i>
+									${date}</p>
+							</div>
+							<div class="card-body">
+								<p class="mb-0">
+									${data.content}
+								</p>
+							</div>
+						</div>
+					</li>`;
 				element.appendChild(template.content);
 				}
-
 
 		{% if activity is defined %}
 
 			function sendMessage() {
-			var inputField = document.getElementById("message-input");
-			var message = inputField.value;
-			console.log({{ activity.owner.id }});
-			console.log({{ app.user.id }});
-			console.log(sender);{% if activity.owner.id is same as (app.user.id) %}messageTarget = sender;
-			{% else %}
-			messageTarget = {{ activity.owner.id }};{% endif %}const messageData = {
-			content: message,
-			recipient: '/users/' + messageTarget,
-			sent: '/users/' + {{ app.user.id }}
+				var inputField = document.getElementById("message-input");
+				var message = inputField.value;
+				console.log({{ activity.owner.id }});
+				console.log({{ app.user.id }});
+				console.log(sender);
+				{% if activity.owner.id is same as (app.user.id) %}messageTarget = sender;
+				{% else %}
+				messageTarget = {{ activity.owner.id }};
+				{% endif %}
+				const messageData = {
+					content: message,
+					recipient: '/users/' + messageTarget,
+					sent: '/users/' + {{ app.user.id }}
+				}
+
+				fetch('https://localhost/messages', {
+				method: 'POST',
+				headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(messageData)
+				});
+
 			}
-
-			fetch('https://localhost/messages', {
-			method: 'POST',
-			headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(messageData)
-			});
-
-			}
-
-
-		document.getElementById("button-addon2").addEventListener("click", sendMessage);{% endif %}
+		document.getElementById("button-addon2").addEventListener("click", sendMessage);
+		
+		{% endif %}
 	</script>
+
 	{% endif %}
 
 	</body>

@@ -42,3 +42,21 @@
     background-clip: padding-box;
     box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
     }
+
+    .gradient-custom {
+        /* fallback for old browsers */
+        background: #81c6be;
+      
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(to right, rgba(129,198,190,1), rgba(181,151,209,1));
+      
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(to right, rgba(129,198,190,1), rgba(181,151,209,1));
+        
+        height: 90vh;
+      }
+      
+      #message-input {
+        
+       
+      }
