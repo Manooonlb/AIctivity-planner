@@ -1,29 +1,24 @@
-<!-- profile/form.html.twig -->
+{{ form_start(form) }}
 <section class="vh-100" style="background-color: #f4f5f7;">
-{# <form action="{{ path('app_profile_edit') }}" method="POST">
-  <div class="mb-3">
-    <label for="username" class="form-label">Username</label>
-    <input type="text" class="form-control" id="username" name="username" value="{{ app.user.username }}" required>
-  </div>
-  <div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" id="email" name="email" value="{{ app.user.email }}" required>
-  </div>
-  <div class="mb-3">
-    <label for="birthday" class="form-label">Birthday</label>
-    <input type="date" class="form-control" id="birthday" name="birthday">
-  </div>
-  <button type="submit" class="btn btn-primary">{{ button_label }}</button>
-</form> #}
-
-    {{ form_start(form) }}
-    <div class="form-group">
-        <label for="profilePicture" class="form-label">Profile Picture</label>
-        {{ form_widget(form.imageFile, {
-            'attr': {'class': 'form-control', 'accept': 'image/*'}
-        }) }}
-    </div>
-    <button class="btn">{{ button_label|default('Save') }}</button>
-    {{ form_end(form) }}
+    <form action="{{ path('app_profile_edit') }}" method="POST">
+        <div class="mb-3">
+            {{ form_row(form.username) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.email) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.birthday) }}
+        </div>
+        <div class="form-group">
+          <label for="profilePicture" class="form-label">Profile Picture</label>
+    {{ form_row(form.imageFile, {
+        'attr': {'class': 'form-control', 'accept': 'image/*'}
+    }) }}
+</div>
+        </div>
+        <button class="btn">{{ button_label|default('Save') }}</button>
+    </form>
 </section>
+{{ form_end(form) }}
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\ProfilePicture;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
@@ -43,7 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\LessThan('-18 years', message:'🔞 NOPE TOO YOUNG 🔞')]
     private ?\DateTimeInterface $birthday = null;
-    private $profilePicture;
+    
+    private ?ProfilePicture $profilePicture = null;
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -163,19 +165,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-  
+    #[ORM\OneToOne(targetEntity: ProfilePicture::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
 
-    public function getProfilePicture(): ?string
-    {
-        return $this->profilePicture;
-    }
-
-    public function setProfilePicture(?string $profilePicture): self
-    {
-        $this->profilePicture = $profilePicture;
-
-        return $this;
-    }
+ public function getProfilePicture(): ?ProfilePicture
+ {
+     return $this->profilePicture;
+ }
+ 
+ public function setProfilePicture(?ProfilePicture $profilePicture): self
+ {
+     $this->profilePicture = $profilePicture;
+ 
+     return $this;
+ }
+ 
     public function isVerified(): bool
     {
         return $this->isVerified;

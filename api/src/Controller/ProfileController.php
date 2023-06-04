@@ -19,56 +19,60 @@ class ProfileController extends AbstractController
 {
     #[Route('/', name: 'app_profile_my', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
+    
     public function profile(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Get the currently logged in user
-        $user = $this->getUser();
-        dump($user);
-        // Create the form with the user's data
-        $form = $this->createForm(RegistrationFormType::class, $user);
+{
+    // Get the currently logged in user
+    $user = $this->getUser();
 
-        // Handle the form submission
-        $form->handleRequest($request);
+    // Create the form with the user's data
+    $form = $this->createForm(UserEditType::class, $user);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Update the user's profile data
-            $entityManager->flush();
+    // Handle the form submission
+    $form->handleRequest($request);
 
-            // Redirect to the profile page or display a success message
-            return $this->redirectToRoute('app_profile_my');
-        }
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Update the user's profile data
+        $entityManager->flush();
 
-        return $this->render('profile/profile.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        // Redirect to the profile page or display a success message
+        return $this->redirectToRoute('app_profile_my');
     }
 
-    #[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
-    public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Get the currently logged in user
-        $user = $this->getUser();
-
-        // Create the form with the user's data
-        $form = $this->createForm(ProfilePictureType::class, null, ['user' => $user]);
+    return $this->render('profile/profile.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 
 
-        // Handle the form submission
-        $form->handleRequest($request);
+#[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
+#[IsGranted('ROLE_USER')]
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Update the user's profile data
-            $entityManager->flush();
+public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Get the currently logged in user
+    $user = $this->getUser();
 
-            // Redirect to the profile page or display a success message
-            return $this->redirectToRoute('app_profile_my');
-        }
+    // Create the form with the user's data
+    $form = $this->createForm(UserEditType::class, $user);
 
-        return $this->render('profile/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    // Handle the form submission
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Update the user's profile data
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Redirect to the profile page or display a success message
+        return $this->redirectToRoute('app_profile_my');
     }
+
+    return $this->render('profile/edit.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
     #[Route('/upload-picture', name: 'app_profile_upload_picture', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function uploadPicture(Request $request, EntityManagerInterface $entityManager): Response
@@ -77,7 +81,8 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         // Create the form for profile picture upload
-        $form = $this->createForm(ProfilePictureType::class);
+        $form = $this->createForm(UserEditType::class, $user);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
