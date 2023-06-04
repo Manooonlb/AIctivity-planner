@@ -43,6 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\LessThan('-18 years', message:'🔞 NOPE TOO YOUNG 🔞')]
     private ?\DateTimeInterface $birthday = null;
+    private $profilePicture;
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -162,7 +163,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+  
 
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+
+        return $this;
+    }
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -186,6 +199,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
    
     /**
      * @return Collection<int, Activity>
