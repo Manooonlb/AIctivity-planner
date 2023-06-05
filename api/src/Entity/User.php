@@ -368,7 +368,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->conversations->add($conversation);
             $conversation->setActivityOwner($this);
         }
-    public function getAvatarPath(): ?string
+    }
+        public function getAvatarPath(): ?string
     {
         return $this->avatarPath;
     }
@@ -393,5 +394,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 }
-}
-}
+
