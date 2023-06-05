@@ -197,7 +197,7 @@
                 'attr': {'class': 'form-control', 'placeholder': 'description'},
                 'label': 'Description'
             }) }}
-    </div>
+
   </li>
   <li class="stepper-step">
     <div class="stepper-head">
@@ -262,54 +262,12 @@
             'attr': {'class': 'form-control', 'placeholder': 'questions'},
             'label': 'Activity Questions'
         })}}
-    <button class="btn custom-button" id="save-button">Save</button>
+        <div class="button">  
+            <button class="btn custom-button-activity" id="save-button">Save</button>
+        </div>
     </div>
   </li>
 
 </ul>
 
-
-
 {{ form_end(form) }}
-
-
-<script>
-    var currentStep = {{ current_step }};
-
-    // Afficher l'étape actuelle
-    function showCurrentStep() {
-        for (var i = 1; i <= 5; i++) {
-            var step = document.getElementById('step' + i);
-            var nextButton = document.getElementById('next-button');
-            var saveButton = document.getElementById('save-button');
-
-            if (i === currentStep) {
-                step.style.display = 'block';
-
-                if (i === 5) {
-                    nextButton.style.display = 'none';
-                    saveButton.style.display = 'block';
-                } else {
-                    nextButton.style.display = 'block';
-                    saveButton.style.display = 'none';
-                }
-            } else {
-                step.style.display = 'none';
-            }
-        }
-    }
-
-    // Passer à l'étape suivante
-    function nextStep() {
-        currentStep++;
-        showCurrentStep();
-    }
-
-    // Écouter le clic sur le bouton "Next"
-    document.getElementById('next-button').addEventListener('click', nextStep);
-
-    // Appeler showCurrentStep() au chargement de la page
-    showCurrentStep();
-</script>
-
-
