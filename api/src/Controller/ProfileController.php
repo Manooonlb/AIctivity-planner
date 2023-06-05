@@ -48,7 +48,8 @@ class ProfileController extends AbstractController
 #[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
 #[IsGranted('ROLE_USER')]
 
-public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
+// ProfileController.php
+public function editProfileUpload(Request $request, EntityManagerInterface $entityManager): Response
 {
     // Get the currently logged in user
     $user = $this->getUser();
@@ -61,8 +62,30 @@ public function editProfile(Request $request, EntityManagerInterface $entityMana
 
     if ($form->isSubmitted() && $form->isValid()) {
         // Update the user's profile data
-        $entityManager->persist($user);
         $entityManager->flush();
+
+        // Handle profile picture upload
+        $profilePicture = $form->get('imageFile')->getData();
+        if ($profilePicture) {
+            // Generate a unique filename
+            $newFilename = uniqid().'.'.$profilePicture->guessExtension();
+        
+            try {
+                // Move the uploaded file to the desired directory
+                $profilePicture->move(
+                    $this->getParameter('profile_picture_directory'),
+                    $newFilename
+                );
+
+                // Update the user's profile picture filename in the database
+                $user->setProfilePicture($newFilename);
+                $entityManager->flush();
+            } catch (FileException $e) {
+                // Handle error when file cannot be moved
+                // You can redirect back to the edit page with an error message
+                return $this->redirectToRoute('app_profile_edit');
+            }
+        }
 
         // Redirect to the profile page or display a success message
         return $this->redirectToRoute('app_profile_my');
@@ -73,6 +96,7 @@ public function editProfile(Request $request, EntityManagerInterface $entityMana
     ]);
 }
 
+
     #[Route('/upload-picture', name: 'app_profile_upload_picture', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function uploadPicture(Request $request, EntityManagerInterface $entityManager): Response
@@ -81,7 +105,7 @@ public function editProfile(Request $request, EntityManagerInterface $entityMana
         $user = $this->getUser();
 
         // Create the form for profile picture upload
-        $form = $this->createForm(UserEditType::class, $user);
+        $form = $this->createForm(ProfilePictureType::class, $user);
 
         $form->handleRequest($request);
 
@@ -103,18 +127,20 @@ public function editProfile(Request $request, EntityManagerInterface $entityMana
                 // You can redirect back to the profile page with an error message
                 return $this->redirectToRoute('app_profile_edit');
             }
-        
+    
             // Update the user's profile picture filename in the database
             $user->setProfilePicture($newFilename);
+            $entityManager->persist($user);
             $entityManager->flush();
         
             // Redirect to the profile page or display a success message
             return $this->redirectToRoute('app_profile_my');
         }
 
-        return $this->render('profile/upload_picture.html.twig', [
+        return $this->render('profile/form.html.twig', [
             'form' => $form->createView(),
         ]);
+        
     }
 
     #[Route('/delete', name: 'app_profile_delete', methods: ['GET', 'POST'])]
