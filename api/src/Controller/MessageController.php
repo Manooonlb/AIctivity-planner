@@ -41,5 +41,19 @@ class MessageController extends AbstractController
 
         return $this->render('message/received.html.twig', compact("message"));
     }
+
+    #[Route('app/show', name: 'app_show')]
+    #[IsGranted('ROLE_USER')]
+    public function show(Message $message, EntityManagerInterface $entityManager): Response
+    {
+        $message->getRecipient();
+        $message->getSent();
+        $message->getCreatedAt();
+
+        $entityManager->persist($message);
+        $entityManager->flush();
+
+        return $this->render('message/show.html.twig', compact("message"));
+    }
 }
 

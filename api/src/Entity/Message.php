@@ -49,6 +49,9 @@ class Message
     #[Groups(['message_notification'])]
     private ?User $sent = null;
 
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    private ?Conversation $conversation = null;
+
     #[ORM\PrePersist]
     public function onCreate(): void
     {
@@ -116,6 +119,18 @@ class Message
     public function setSent(?User $sent): self
     {
         $this->sent = $sent;
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
 
         return $this;
     }

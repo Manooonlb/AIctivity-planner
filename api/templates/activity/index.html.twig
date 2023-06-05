@@ -1,29 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Activity index{% endblock %}
+{% block title %}Activity index
+{% endblock %}
 
 {% block body %}
-    <h1>Activity index</h1>
+	<h1>Open Activities</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Owner</th>
-                <th>Location</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Duration</th>
-                <th>Date</th>
-                <th>Starting_time</th>
-                <th>Outdoor</th>
-                <th>Image</th>
-                <th>Open</th>
-                <th>NumberOfParticipants</th>
-                <th>Wanna join ?</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for activity in activities %}
+			{% for activity in activities %}
+				<div class="row row-cols-1 row-cols-md-3">
+					<div class="col mb-4">
+						<div
+							class="card h-100">
+							<!--Card image-->
+							<div class="view overlay">
+								<img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/16.webp" alt="Card image cap">
+								<a href="#!">
+									<div class="mask rgba-white-slight"></div>
+								</a>
+							</div>
+
+							<!--Card content-->
+							<div
+								class="card-body">
+
+								<!--Title-->
+								<h4 class="card-title">{{ activity.name }} - {{ activity.date ? activity.date|date('Y-m-d') : '' }}</h4>
+								<!--Text-->
+								<p class="card-text">⏰{{ activity.startingTime ? activity.startingTime|date('H:i:s') : '' }} <br>{{ activity.description }} - <br>Organized by : {{ activity.owner.getUsername }} <br> with {{ activity.numberOfParticipants }} participants </p>
+								<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+								<a  href="{{ path('app_message', {'id': activity.id})}}" class="btn btn-light-blue btn-md">Wanna join {{ activity.owner.getUsername }} ? </a>
+                                {% if app.user.getUsername == activity.owner.getUsername %}
+							    <a href="{{ path('app_activity_edit', {'id': activity.id}) }}">edit</a>
+						        <a href="{{ path('app_activity_show', {'id': activity.id}) }}">show</a>
+                                {% endif %}
+                            </div>
+						</div>
+					</div>
+				</div>
+            {% endfor %}                   
+			
+{% for activity in activities %}
             <tr>
                 <td>{{ activity.owner.getUsername() }}</td>
                 <td>{{ activity.location}}</td>
@@ -53,5 +69,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_activity_new') }}">Create new</a>
+	<a href="{{ path('app_activity_new') }}">Create new</a>
 {% endblock %}

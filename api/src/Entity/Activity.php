@@ -60,10 +60,14 @@ class Activity
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
+    #[ORM\OneToMany(mappedBy: 'activity', targetEntity: Conversation::class)]
+    private Collection $conversations;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->activityQuestions = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -258,6 +262,36 @@ class Activity
     public function setLocation(string $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): self
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->setActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): self
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            // set the owning side to null (unless already changed)
+            if ($conversation->getActivity() === $this) {
+                $conversation->setActivity(null);
+            }
+        }
 
         return $this;
     }
