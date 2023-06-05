@@ -1,6 +1,6 @@
-{{ form_start(form) }}
 <section class="vh-100" style="background-color: #f4f5f7;">
-    <form method="post" action="{{ path('app_profile_edit') }}" method="POST">
+{{ form_start(form) }}
+    {# <form method="post" action="{{ path('app_profile_edit') }}" method="POST"> #}
         <div class="mb-3">
             {{ form_row(form.username) }}
         </div>
@@ -11,14 +11,14 @@
             {{ form_row(form.birthday, {'label': 'Birthday'}) }}
         </div>
         <div class="form-group">
-            <label for="profilePicture" class="form-label">Profile Picture</label>
+           
             {{ form_row(form.imageFile, {
                 'attr': {'class': 'form-control', 'accept': 'image/*'}
             }) }}
         </div>
         <button class="btn">{{ button_label|default('Save') }}</button>
-    </form>
-</section>
+    {# </form> #}
 
 {{ form_end(form) }}
+</section>
 

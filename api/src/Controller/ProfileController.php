@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\UserEditType;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,82 +20,79 @@ class ProfileController extends AbstractController
 {
     #[Route('/', name: 'app_profile_my', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    
     public function profile(Request $request, EntityManagerInterface $entityManager): Response
-{
-    // Get the currently logged in user
-    $user = $this->getUser();
+    {
+        // Get the currently logged in user
+        $user = $this->getUser();
 
-    // Create the form with the user's data
-    $form = $this->createForm(UserEditType::class, $user);
+        // Create the form with the user's data
+        $form = $this->createForm(UserEditType::class, $user);
 
-    // Handle the form submission
-    $form->handleRequest($request);
+        // Handle the form submission
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Update the user's profile data
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Update the user's profile data
+            $entityManager->flush();
 
-        // Redirect to the profile page or display a success message
-        return $this->redirectToRoute('app_profile_my');
-    }
-
-    return $this->render('profile/profile.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
-
-
-#[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
-#[IsGranted('ROLE_USER')]
-
-// ProfileController.php
-public function editProfileUpload(Request $request, EntityManagerInterface $entityManager): Response
-{
-    // Get the currently logged in user
-    $user = $this->getUser();
-
-    // Create the form with the user's data
-    $form = $this->createForm(UserEditType::class, $user);
-
-    // Handle the form submission
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Update the user's profile data
-        $entityManager->flush();
-
-        // Handle profile picture upload
-        $profilePicture = $form->get('imageFile')->getData();
-        if ($profilePicture) {
-            // Generate a unique filename
-            $newFilename = uniqid().'.'.$profilePicture->guessExtension();
-        
-            try {
-                // Move the uploaded file to the desired directory
-                $profilePicture->move(
-                    $this->getParameter('profile_picture_directory'),
-                    $newFilename
-                );
-
-                // Update the user's profile picture filename in the database
-                $user->setProfilePicture($newFilename);
-                $entityManager->flush();
-            } catch (FileException $e) {
-                // Handle error when file cannot be moved
-                // You can redirect back to the edit page with an error message
-                return $this->redirectToRoute('app_profile_edit');
-            }
+            // Redirect to the profile page or display a success message
+            return $this->redirectToRoute('app_profile_my');
         }
 
-        // Redirect to the profile page or display a success message
-        return $this->redirectToRoute('app_profile_my');
+        return $this->render('profile/profile.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
-    return $this->render('profile/edit.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
+
+    #[Route('/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function editProfileUpload(Request $request, UserRepository $userRepository): Response
+    {
+        // Get the currently logged in user
+        $user = $this->getUser();
+
+        // Create the form with the user's data
+        $form = $this->createForm(UserEditType::class, $user);
+
+        // Handle the form submission
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Handle profile picture upload
+            $profilePicture = $form->get('imageFile')->getData();
+            if ($profilePicture) {
+                // Generate a unique filename
+                $newFilename = uniqid() . '.' . $profilePicture->guessExtension();
+
+                try {
+                    // Move the uploaded file to the desired directory
+                    $profilePicture->move(
+                        $this->getParameter('profile_picture_directory'),
+                        $newFilename
+                    );
+
+                    // Update the user's profile picture filename in the database
+                    $user->setAvatarPath($newFilename);
+                    // dd($user);
+                    $userRepository->save($user, true);
+                } catch (FileException $e) {
+                    dd($e->getMessage());
+                    // Handle error when file cannot be moved
+                    // You can redirect back to the edit page with an error message
+                    return $this->redirectToRoute('app_profile_edit');
+                }
+            }
+
+            // Redirect to the profile page or display a success message
+            return $this->redirectToRoute('app_profile_my');
+        }
+
+        return $this->render('profile/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
 
     #[Route('/upload-picture', name: 'app_profile_upload_picture', methods: ['POST'])]
@@ -112,10 +110,10 @@ public function editProfileUpload(Request $request, EntityManagerInterface $enti
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the uploaded picture file
             $profilePicture = $form->get('imageFile')->getData();
-        
+
             // Generate a unique filename
-            $newFilename = uniqid().'.'.$profilePicture->guessExtension();
-        
+            $newFilename = uniqid() . '.' . $profilePicture->guessExtension();
+
             try {
                 // Move the uploaded file to the desired directory
                 $profilePicture->move(
@@ -127,12 +125,12 @@ public function editProfileUpload(Request $request, EntityManagerInterface $enti
                 // You can redirect back to the profile page with an error message
                 return $this->redirectToRoute('app_profile_edit');
             }
-    
+
             // Update the user's profile picture filename in the database
             $user->setProfilePicture($newFilename);
             $entityManager->persist($user);
             $entityManager->flush();
-        
+
             // Redirect to the profile page or display a success message
             return $this->redirectToRoute('app_profile_my');
         }
@@ -140,7 +138,7 @@ public function editProfileUpload(Request $request, EntityManagerInterface $enti
         return $this->render('profile/form.html.twig', [
             'form' => $form->createView(),
         ]);
-        
+
     }
 
     #[Route('/delete', name: 'app_profile_delete', methods: ['GET', 'POST'])]

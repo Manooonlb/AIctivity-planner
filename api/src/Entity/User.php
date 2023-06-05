@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -42,9 +43,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\LessThan('-18 years', message:'🔞 NOPE TOO YOUNG 🔞')]
+    #[Assert\LessThan('-18 years', message: '🔞 NOPE TOO YOUNG 🔞')]
     private ?\DateTimeInterface $birthday = null;
-    
+
+
+    #[ORM\OneToOne(targetEntity: ProfilePicture::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ProfilePicture $profilePicture = null;
 
     #[ORM\Column(type: 'boolean')]
@@ -69,7 +73,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'sent', targetEntity: Message::class)]
     private Collection $sended;
 
-    
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarPath = null;
 
     public function __construct()
     {
@@ -151,9 +156,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    
-    
-
     public function getBirthday(): ?\DateTimeInterface
     {
         return $this->birthday;
@@ -165,21 +167,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    #[ORM\OneToOne(targetEntity: ProfilePicture::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
 
- public function getProfilePicture(): ?ProfilePicture
- {
-     return $this->profilePicture;
- }
- 
- public function setProfilePicture(?ProfilePicture $profilePicture): self
- {
-     $this->profilePicture = $profilePicture;
- 
-     return $this;
- }
- 
+    public function getProfilePicture(): ?ProfilePicture
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?ProfilePicture $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+
+        return $this;
+    }
+
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -204,7 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-   
+
     /**
      * @return Collection<int, Activity>
      */
@@ -345,6 +345,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $sended->setSent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAvatarPath(): ?string
+    {
+        return $this->avatarPath;
+    }
+
+    public function setAvatarPath(?string $avatarPath): self
+    {
+        $this->avatarPath = $avatarPath;
 
         return $this;
     }
