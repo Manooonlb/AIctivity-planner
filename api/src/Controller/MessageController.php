@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 
 class MessageController extends AbstractController
 {
@@ -44,7 +46,7 @@ class MessageController extends AbstractController
 
     #[Route('app/conversations/{id}', name: 'app_show_conversation')]
     #[IsGranted('ROLE_USER')]
-    public function showConversation(Conversation $conversation) : Response
+    public function showConversation(Conversation $conversation, HubInterface $hub) : Response
     {
          /** @var User */
          $user = $this->getUser();
@@ -55,6 +57,23 @@ class MessageController extends AbstractController
             dd('degage');
         }
         // dd($user->getConversationsActivitiesOwners()->count());
+        foreach ($conversation->getMessages() as $message)
+        {
+                // Vérifier si le message n'a pas encore été lu
+            if ($message->isIsRead(false)) {
+                // Marquer le message comme lu
+                $message->setIsRead(true);
+
+                // Publier une mise à jour Mercure pour informer les clients de la modification
+                $update = new Update(
+                sprintf('/messages/%d', $message->getId()),
+                json_encode(['isRead' => true])
+            );
+                $hub->publish($update);
+            }
+        }
+
+       
         return $this->render('message/index.html.twig', [
             'conversation' => $conversation,
             'allConversations' =>[
@@ -71,17 +90,6 @@ class MessageController extends AbstractController
         return $this->render('message/received.html.twig');
     }
 
-    #[Route('app/read/{id}', name: 'app_read')]
-    #[IsGranted('ROLE_USER')]
-    public function read(Message $message, EntityManagerInterface $entityManager): Response
-    {
-        $message->setIsRead(true);
-
-        $entityManager->persist($message);
-        $entityManager->flush();
-
-        return $this->render('message/received.html.twig', compact("message"));
-    }
 
     #[Route('app/show', name: 'app_show')]
     #[IsGranted('ROLE_USER')]

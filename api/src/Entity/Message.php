@@ -30,7 +30,7 @@ class Message
     #[Groups(['message_notification'])]
     private ?string $content = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 'false'], nullable: true)]
+    #[ORM\Column(type: 'boolean', options: ['default' => 'false'], nullable: false)]
     #[Groups(['message_notification'])]
     private ?bool $isRead = null;
 
