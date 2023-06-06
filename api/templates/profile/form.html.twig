@@ -1,24 +1,33 @@
-<section class="vh-100" style="background-color: #f4f5f7;">
+
+
+{% extends 'base.html.twig' %}
+{% block body %}
 {{ form_start(form) }}
-    {# <form method="post" action="{{ path('app_profile_edit') }}" method="POST"> #}
-        <div class="mb-3">
+<div class=" wrapper">
+  <section class=" gradient-custom card mb-6 profile-form" style="background-color: #f4f5f7;">
+        
+        <div class="mb-3 box1">
             {{ form_row(form.username) }}
         </div>
-        <div class="mb-3">
+        <div class="mb-3 box2">
             {{ form_row(form.email, {'label': 'Email'}) }}
         </div>
-        <div class="mb-3">
+        <div class="mb-3 box3">
             {{ form_row(form.birthday, {'label': 'Birthday'}) }}
         </div>
-        <div class="form-group">
+        <div class="form-group box4">
            
             {{ form_row(form.imageFile, {
                 'attr': {'class': 'form-control', 'accept': 'image/*'}
             }) }}
         </div>
-        <button class="btn">{{ button_label|default('Save') }}</button>
-    {# </form> #}
-
+       
+        <button class="btn">{{ button_label|default('Save') }}</button> <div>
+            <a href="{{ path('app_profile_my') }}">back to profile</a>
+        </div>
+        </section>
+</div>
 {{ form_end(form) }}
-</section>
+{% endblock %}
+
 
