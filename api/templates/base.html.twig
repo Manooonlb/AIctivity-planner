@@ -41,84 +41,69 @@
 				console.log(JSON.parse(event.data));
 				data = JSON.parse(event.data);
 				sender = data.sent.id;
+				console.log(data);
+				
+				const notificationCount = document.getElementById(`conversation-${data.conversation.id}-unread`);
+						if (notificationCount) {
+							notificationCount.innerText = +notificationCount.innerText +1;
+						}
+				
+				{% if conversation is defined %}
+					
+				if (data.conversation.id != {{ conversation.id}}) {
+					console.log("mettre à jour les notifs");
+					return;
+					}
+						const element = document.getElementById("message-box-{{conversation.id}}");
+						console.log(element);
 
-				const element = document.getElementById("message-box");
-				console.log(element);
+						const uri = {{ app.user.id }};
+						console.log(uri);
+						const date = (new Date(data.createdAt)).toUTCString();
+						console.log(date);
 
-				const uri = {{ app.user.id }};
-				console.log(uri);
-				const date = (new Date(data.createdAt)).toUTCString();
-				console.log(date);
+						const template = document.createElement('template');
+						template.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
+							<img src="/images/647dd7365e34f.jpg"
+							alt="avatar 1" style="width: 45px; height: 100%;">
+							<div>
+							<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: ${sender === uri ?"#f5f6f7":"rgba(129,198,190,1)"};">${data.content}</p>
+							<p class="small ms-3 mb-3 rounded-3 text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
+							</div>
+						</div>`
+						element.appendChild(template.content);
+						}
 
-				const template = document.createElement('template');
-				template.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
-                    <img src="${data.sent.avatar}"
-                      alt="avatar 1" style="width: 45px; height: 100%;">
-                    <div>
-                      <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: ${sender === uri ?"#f5f6f7":"rgba(129,198,190,1)"};">${data.content}</p>
-                      <p class="small ms-3 mb-3 rounded-3 text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
-                    </div>
-                  </div>`
-				element.appendChild(template.content);
-				}
+				
 
-		{% if activity is defined %}
+					function sendMessage() {
+						var inputField = document.getElementById("message-input");
+						var message = inputField.value;
+						{% if conversation.activityOwner.id is same as (app.user.id) %}
+							messageTarget = sender;
+						{% else %}
+						messageTarget = {{ conversation.activityOwner.id }};
+						{% endif %}
+						const messageData = {
+							content: message,
+							conversation : "/conversations/{{ conversation.id}}",
+							recipient: "/users/" + messageTarget,
+							sent: "/users/{{ app.user.id }}"
+						}
 
-			function sendMessage() {
-				var inputField = document.getElementById("message-input");
-				var message = inputField.value;
-				console.log({{ activity.owner.id }});
-				console.log({{ app.user.id }});
-				console.log(sender);
-				{% if activity.owner.id is same as (app.user.id) %}messageTarget = sender;
-				{% else %}
-				messageTarget = {{ activity.owner.id }};
+						fetch('https://localhost/messages', {
+						method: 'POST',
+						headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(messageData)
+						});
+
+					}
+					document.getElementById("button-addon2").addEventListener("click", sendMessage);
+
 				{% endif %}
-				const messageData = {
-					content: message,
-					recipient: '/users/' + messageTarget,
-					sent: '/users/' + {{ app.user.id }}
-				}
-
-				fetch('https://localhost/messages', {
-				method: 'POST',
-				headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(messageData)
-				});
-
-			}
-		document.getElementById("button-addon2").addEventListener("click", sendMessage);
-
-		{% endif %}
-		document.addEventListener('DOMContentLoaded', function() {
-		// Récupérer les messages depuis la base de données
-		fetch('https://localhost/messages')
-			.then(response => response.json())
-			.then(data => {
-				// Parcourir les messages et les afficher
-				data.forEach(message => {
-					const element = document.getElementById("message-box");
-
-					const template = document.createElement('template');
-					template.innerHTML = `<div class="d-flex flex-row justify-content-${message.sent === uri ? "end" : "start"}">
-						<img src="${message.sent.avatar}" alt="avatar 1" style="width: 45px; height: 100%;">
-						<div>
-							<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: ${message.sent === uri ?"#f5f6f7":"rgba(129,198,190,1)"};">${message.content}</p>
-							<p class="small ms-3 mb-3 rounded-3 text-muted float-${message.sent === uri ? "end" : "start"}">${message.date}</p>
-						</div>
-					</div>`;
-
-					element.appendChild(template.content);
-				});
-       		 })
-			 
-        .catch(error => {
-            console.error('Une erreur s\'est produite lors de la récupération des messages :', error);
-        });
-});
 
 	</script>
 

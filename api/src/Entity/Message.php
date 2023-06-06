@@ -18,7 +18,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
     )
 ])]
 #[ORM\HasLifecycleCallbacks()]
-
 class Message
 {
     #[ORM\Id]
@@ -50,6 +49,7 @@ class Message
     private ?User $sent = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[Groups(['message_notification'])]
     private ?Conversation $conversation = null;
 
     #[ORM\PrePersist]

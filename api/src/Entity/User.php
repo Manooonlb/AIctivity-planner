@@ -73,12 +73,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'sent', targetEntity: Message::class)]
     private Collection $sended;
 
-    #[ORM\OneToMany(mappedBy: 'activityOwner', targetEntity: Conversation::class)]
-    private Collection $conversations;
-
     
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatarPath = null;
+
+    #[ORM\OneToMany(mappedBy: 'activityOwner', targetEntity: Conversation::class)]
+    private Collection $conversationsActivitiesOwners;
+
+    #[ORM\OneToMany(mappedBy: 'activityParticipant', targetEntity: Conversation::class)]
+    private Collection $conversationsActivitiesParticipants;
 
     public function __construct()
     {
@@ -87,7 +90,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->activityQuestions = new ArrayCollection();
         $this->received = new ArrayCollection();
         $this->sended = new ArrayCollection();
-        $this->conversations = new ArrayCollection();
+        $this->conversationsActivitiesOwners = new ArrayCollection();
+        $this->conversationsActivitiesParticipants = new ArrayCollection();
     }
 
 
@@ -354,21 +358,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Conversation>
-     */
-    public function getConversations(): Collection
-    {
-        return $this->conversations;
-    }
-
-    public function addConversation(Conversation $conversation): self
-    {
-        if (!$this->conversations->contains($conversation)) {
-            $this->conversations->add($conversation);
-            $conversation->setActivityOwner($this);
-        }
-    }
+    
         public function getAvatarPath(): ?string
     {
         return $this->avatarPath;
@@ -381,17 +371,67 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeConversation(Conversation $conversation): self
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversationsActivitiesOwners(): Collection
     {
-        if ($this->conversations->removeElement($conversation)) {
+        return $this->conversationsActivitiesOwners;
+    }
+
+    public function addConversationsActivitiesOwner(Conversation $conversationsActivitiesOwner): self
+    {
+        if (!$this->conversationsActivitiesOwners->contains($conversationsActivitiesOwner)) {
+            $this->conversationsActivitiesOwners->add($conversationsActivitiesOwner);
+            $conversationsActivitiesOwner->setActivityOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversationsActivitiesOwner(Conversation $conversationsActivitiesOwner): self
+    {
+        if ($this->conversationsActivitiesOwners->removeElement($conversationsActivitiesOwner)) {
             // set the owning side to null (unless already changed)
-            if ($conversation->getActivityOwner() === $this) {
-                $conversation->setActivityOwner(null);
+            if ($conversationsActivitiesOwner->getActivityOwner() === $this) {
+                $conversationsActivitiesOwner->setActivityOwner(null);
             }
         }
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversationsActivitiesParticipants(): Collection
+    {
+        return $this->conversationsActivitiesParticipants;
+    }
+
+    public function addConversationsActivitiesParticipant(Conversation $conversationsActivitiesParticipant): self
+    {
+        if (!$this->conversationsActivitiesParticipants->contains($conversationsActivitiesParticipant)) {
+            $this->conversationsActivitiesParticipants->add($conversationsActivitiesParticipant);
+            $conversationsActivitiesParticipant->setActivityParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversationsActivitiesParticipant(Conversation $conversationsActivitiesParticipant): self
+    {
+        if ($this->conversationsActivitiesParticipants->removeElement($conversationsActivitiesParticipant)) {
+            // set the owning side to null (unless already changed)
+            if ($conversationsActivitiesParticipant->getActivityParticipant() === $this) {
+                $conversationsActivitiesParticipant->setActivityParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
 
 }
 
