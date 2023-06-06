@@ -88,7 +88,7 @@ class ActivityController extends AbstractController
             $session->remove('current_step');
 
             // Rediriger vers la liste des activités
-            return $this->redirectToRoute('app_activity_my');
+            return $this->redirectToRoute('app_activity_index');
         }
 
         if (!$session->has('current_step')) {
