@@ -23,7 +23,7 @@
 		<link rel="stylesheet" href="/css/style.css"/>
 	</head>
 	<body>
-		{% include "components/navbar.html.twig" %}
+	{% include "components/navbar.html.twig" %}
 		<div class="container"> {% block body %}{% endblock %}
 			</div>
 
@@ -44,6 +44,7 @@
 				
 				const sendMessage = () => {
 					var message = inputField.value;
+					sender = {{ conversation.activityParticipant.id }}
 					{% if conversation.activityOwner.id is same as (app.user.id) %}
 						messageTarget = sender;
 					{% else %}
@@ -65,6 +66,7 @@
 						body: JSON.stringify(messageData)
 					});
 				}
+
 				sendButton.addEventListener("click", sendMessage);
 
 				const addMessageToList = (data, sender) => {
@@ -76,8 +78,8 @@
 					const date = new Date(data.createdAt).toUTCString();
 					console.log(date);
 
-					const template = document.createElement('template');
-					template.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
+					const messageBubbleTemplate = document.createElement('messageBubbleTemplate');
+					messageBubbleTemplate.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
 						<img src="/images/647dd7365e34f.jpg"
 						alt="avatar 1" style="width: 45px; height: 100%;">
 						<div>
@@ -85,70 +87,61 @@
 							<p class="small ms-3 mb-3 rounded-3 text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
 						</div>
 					</div>`;
-					element.appendChild(template.content);
+					element.appendChild(messageBubbleTemplate);
 				}
 
 				const updateSideMessageNotification = (data) => {
-					if (data.conversation.id === {{ conversation.id}}){
-						return;
+					if (data.sent.id != {{ app.user.id }} && notificationCount) {
+					notificationCount.innerText = +notificationCount.innerText + 1;
 					}
 					const conversationLine = document.getElementById(`conversation-${data.conversation.id}-unread`)
 					console.log(conversationLine);
-					if (!conversationLine){
+						if (!conversationLine){
 						const sideMessageTemplate = document.createElement('sideMessageTemplate');
 						sideMessageTemplate.innerHTML = `	<li class="p-2 border-bottom">
-														<a href="#!" class="d-flex justify-content-between">
-															<div class="d-flex flex-row">
-																<div>
-																	<img src="/images/{{ app.user.avatarPath }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
-																	<span class="badge bg-warning badge-dot"></span>
-																</div>
-																<div class="pt-1">
-																	<p class="fw-bold mb-0"></p>
-																	<p class="small text-muted"></p>
-																</div>
+													<a href="#!" class="d-flex justify-content-between">
+														<div class="d-flex flex-row">
+															<div>
+																<img src="/images/{{ app.user.avatarPath }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
+																<span class="badge bg-warning badge-dot"></span>
 															</div>
 															<div class="pt-1">
-																<p class="small text-muted mb-1">5 mins ago</p>
-																<span id="conversation-{{ item.id }}-unread" class="badge bg-danger rounded-pill float-end">5</span>
+																<p class="fw-bold mb-0"></p>
+																<p class="small text-muted"></p>
 															</div>
-														</a>
-													</li> `
-						
-							
+														</div>
+														<div class="pt-1">
+															<p class="small text-muted mb-1">5 mins ago</p>
+															<span id="conversation-${conversation.id}-unread" class="badge bg-danger rounded-pill float-end">5</span>
+														</div>
+													</a>
+												</li> `	
+						}
+				}
+				const updateHeaderMessageNotification = (data) => {
+					if (data.sent.id != {{ app.user.id }} && notificationCount) {
+						notificationCount.innerText = +notificationCount.innerText + 1;
 					}
 				}
-			{% endif %}
+				
 
-			const updateHeaderMessageNotification = (data) => {
-				if (data.sent.id != {{ app.user.id }} && notificationCount) {
-					notificationCount.innerText = +notificationCount.innerText + 1;
-				}
-			}
-            const template = document.createElement('template');
-            template.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
-                <img src="/avatars/647dd7365e34f.jpg"
-                alt="avatar 1" style="width: 45px; height: 100%;">
-                <div>
-                    <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: ${sender === uri ? "#f5f6f7" : "rgba(129,198,190,1)"};">${data.content}</p>
-                    <p class="small ms-3 mb-3 rounded-3 text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
-                </div>
-            </div>`;
-            element.appendChild(template.content);
-			function sendMessage() {
-        var inputField = document.getElementById("message-input");
-        var message = inputField.value;
-        {% if conversation.activityOwner.id is same as (app.user.id) %}
-            messageTarget = sender;
-        {% else %}
-            messageTarget = {{ conversation.activityOwner.id }};
-        {% endif %}
-        const messageData = {
-            content: message,
-            conversation: "/conversations/{{ conversation.id }}",
-            recipient: "/users/" + messageTarget,
-            sent: "/users/{{ app.user.id }}"
-        };
+			{# function sendMessage() {
+        		var inputField = document.getElementById("message-input");
+        		var message = inputField.value;
+        		{% if conversation.activityOwner.id is same as (app.user.id) %}
+            		messageTarget = sender;
+        		{% else %}
+            		messageTarget = {{ conversation.activityOwner.id }};
+        		{% endif %}
+
+        		const messageData = {
+				content: message,
+				conversation: "/conversations/{{ conversation.id }}",
+				recipient: "/users/" + messageTarget,
+				sent: "/users/{{ app.user.id }}"
+        		}
+			}; #}
+			{% endif %}
 
 			eventSource.onmessage = event => {
 				console.log(JSON.parse(event.data));
