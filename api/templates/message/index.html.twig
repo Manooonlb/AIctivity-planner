@@ -49,7 +49,7 @@
 								<div id="message-box-{{ conversation.id }}" class="pt-3 pe-3" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 									{% for message in conversation.messages %}
 										<div class="d-flex flex-row justify-content-start">
-											<img src="/images/647dd7365e34f.jpg" alt="avatar 1" style="width: 45px; height: 100%;">
+											<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 1" style="width: 45px; height: 100%;">
 											<div>
 												<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7">{{ message.content }}</p>
 												<p class="small ms-3 mb-3 rounded-3 text-muted float-start">{{ message.createdAt|date('H:i:s') }}</p>
@@ -58,7 +58,7 @@
 									{% endfor %}
 								</div>
 								<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-									<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
+									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" style="width: 40px; height: 100%;">
 									<input type="text" class="form-control form-control-lg" id="message-input" id="exampleFormControlInput2" placeholder="Type message">
 									<a class="ms-1 text-muted" href="#!">
 										<i class="fas fa-paperclip"></i>
