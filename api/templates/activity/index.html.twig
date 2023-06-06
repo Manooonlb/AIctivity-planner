@@ -4,10 +4,11 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Open Activities</h1>
-
+	{# <h1>Join activitiy ;)</h1> #}
+	<div class="row row-cols-2 row-cols-md-3">
+	
 	{% for activity in activities %}
-		<div class="row row-cols-1 row-cols-md-3">
+		
 			<div class="col mb-4">
 				<div
 					class="card h-100">
@@ -46,12 +47,16 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-
+		
 	{% endfor %}
 
-	{% for activity in activities %}
+<div class="button"> 
+	<a href="{{ path('app_activity_new') }}" button class="btn custom-button-activity" id="save-button">Create new activity</a>
+</div>
+
+</div>
+
+	{# {% for activity in activities %}
 		<tr>
 			<td>{{ activity.owner.getUsername() }}</td>
 			<td>{{ activity.location}}</td>
@@ -79,5 +84,6 @@
 		<tr>
 			<td colspan="11">no records found</td>
 		</tr>
-	{% endfor %}
-</tbody></table><a href="{{ path('app_activity_new') }}">Create new</a>{% endblock %}
+	{% endfor %} #}
+
+{% endblock %}
