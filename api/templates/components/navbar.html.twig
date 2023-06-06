@@ -36,7 +36,7 @@
                 {% set unreadMessageCount = app.user.getUnreadMessageCount() %}
 
                 {% if unreadMessageCount > 0 %}
-                    <a type="favicon" href="" class="far fa-paper-plane"></a>
+                    <a type="favicon" href="{{path('app_show_all_conversations')}}" class="far fa-paper-plane"></a>
                     <span id="conversation-unread"class="badge bg-danger rounded-pill float-end">{{ unreadMessageCount }}</span>
                 {% endif %}
 

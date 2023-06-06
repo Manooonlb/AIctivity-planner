@@ -72,10 +72,25 @@ class MessageController extends AbstractController
                 $hub->publish($update);
             }
         }
-
        
         return $this->render('message/index.html.twig', [
             'conversation' => $conversation,
+            'allConversations' =>[
+                ...$user->getConversationsActivitiesOwners()->getValues(),
+                ...$user->getConversationsActivitiesParticipants()->getValues()
+            ],
+        ]);
+    }
+
+
+    #[Route('app/conversations', name: 'app_show_all_conversations')]
+    #[IsGranted('ROLE_USER')]
+    public function showAllConversations() : Response
+    {
+         /** @var User */
+         $user = $this->getUser();
+       
+        return $this->render('message/conversations.html.twig', [
             'allConversations' =>[
                 ...$user->getConversationsActivitiesOwners()->getValues(),
                 ...$user->getConversationsActivitiesParticipants()->getValues()
