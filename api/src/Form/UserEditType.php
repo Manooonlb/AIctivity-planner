@@ -36,7 +36,7 @@ class UserEditType extends AbstractType
                         //     'application/jpg',
                         //     'application/png',
                         // ],
-                        'mimeTypesMessage' => 'Please upload a valid PDF document',
+                        'mimeTypesMessage' => 'Please upload a valid .jpeg document',
                     ])
                 ],
             ]);

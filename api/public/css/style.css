@@ -1,3 +1,4 @@
+
 .background-section {
     /* background-image: url('/images/testbackground.png'); */
     background-image: url('/images/AIctivity_Background_V5.gif');
@@ -23,6 +24,16 @@
     /* box-shadow:  20px 20px 60px #bebebe, -20px -20px 60px #ffffff; */
     margin-top: 15px;
   }
+
+.btn-custom-profile {
+    color: white;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.col-sm-3 {
+  color: white;
+}
 
 .index-app {
     margin-top: 100px; 

@@ -4,7 +4,15 @@
 {% endblock %}
 
 {% block body %}
-	{# <h1>Join activitiy ;)</h1> #}
+
+	<div class="d-flex justify-content-center"> 
+	<a href="{{ path('app_activity_new') }}" button class="btn custom-button-activity">Create new activity</a>
+	</div>
+
+	<div class="d-flex justify-content-center">
+	<h1>or join activitiy :</h1>
+	</div>
+
 	<div class="row row-cols-2 row-cols-md-3">
 	
 	{% for activity in activities %}
@@ -37,22 +45,19 @@
 							participants
 						</p>
 						<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-						<a href="{{ path('app_message', {'id': activity.id})}}" class="btn btn-light-blue btn-md">
-                            Wanna join {{ activity.owner.getUsername }} ?
+						<a href="{{ path('app_message', {'id': activity.id})}}" class="btn custom-button-activity">
+                            CONTACT {{ activity.owner.getUsername }}
 						</a>
+						<a href="{{ path('app_activity_edit', {'id': activity.id}) }}" button class="btn btn-light-blue btn-md" >Edit</a>	
 						{% if app.user.id == activity.owner.id %}
-							<a href="{{ path('app_activity_edit', {'id': activity.id}) }}">edit</a>
-							<a href="{{ path('app_activity_show', {'id': activity.id}) }}">show</a>
+								{# <a href="{{ path('app_activity_show', {'id': activity.id}) }}" button class="btn custom-button-activity">Show</a> #}
+			
 						{% endif %}
 					</div>
 				</div>
 			</div>
 		
 	{% endfor %}
-
-<div class="button"> 
-	<a href="{{ path('app_activity_new') }}" button class="btn custom-button-activity" id="save-button">Create new activity</a>
-</div>
 
 </div>
 
