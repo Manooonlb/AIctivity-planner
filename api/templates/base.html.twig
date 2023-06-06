@@ -40,7 +40,9 @@
 			const inputField = document.getElementById("message-input");
 			const sendButton = document.getElementById("button-addon2");
 			{% if conversation is defined %}
-				const element = document.getElementById("message-box-{{ conversation.id }}");
+				const element = document.getElementById("message-box-{{ conversation.id }}");	
+				var scrollDiv = document.getElementById("message-box-{{ conversation.id }}");
+					scrollDiv.scrollTop = scrollDiv.scrollHeight;
 				
 				const sendMessage = () => {
 					var message = inputField.value;
@@ -90,6 +92,11 @@
 					element.appendChild(messageBubbleTemplate);
 				}
 
+				const addMessageToSideList = (data, sender) => {
+					if(!element){
+						return;
+					}
+				}
 				const updateSideMessageNotification = (data) => {
 					if (data.sent.id != {{ app.user.id }} && notificationCount) {
 					notificationCount.innerText = +notificationCount.innerText + 1;
@@ -148,11 +155,13 @@
 				data = JSON.parse(event.data);
 				sender = data.sent.id;
 				console.log(data);
+				
 
 				{% if conversation is defined %}
 
 					updateSideMessageNotification(data)
 					addMessageToList(data, sender)
+					scrollDiv.scrollTop = scrollDiv.scrollHeight;
 
 				{% else %}
 
@@ -160,6 +169,7 @@
 
 				{% endif %}
 			};
+			
 		</script>
 	{% endif %}
 	</body>

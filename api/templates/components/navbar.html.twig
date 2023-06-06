@@ -34,18 +34,15 @@
             {% if is_granted('ROLE_USER') %}
               
                 {% set unreadMessageCount = app.user.getUnreadMessageCount() %}
-
-                    <a type="favicon" href="{{path('app_show_all_conversations')}}" class="far fa-paper-plane"></a>
+                {% set activityId = 1 %} {# ID de l'activité par défaut #}
+                    <a type="favicon" href="{{path('app_message',{'id':activityId})}}" class="far fa-paper-plane"></a>
                 {% if unreadMessageCount > 0 %}    
                     <span id="conversation-unread"class="badge bg-danger rounded-pill float-end">{{ unreadMessageCount }}</span>
                 {% endif %}
 
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_profile_my') }}">My profile</a>
 
-                {# <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_my') }}">My Activities</a> #}
-
-
-<a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_index') }}">Activities</a>
+                <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_index') }}">Activities</a>
 
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item"  href="{{ path('app_logout') }}">Logout</a>
 

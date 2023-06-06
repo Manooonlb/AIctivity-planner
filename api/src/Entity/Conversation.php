@@ -151,4 +151,17 @@ class Conversation
 
         return $this;
     }
+
+    public function getUnreadConversationMessageCount(): int
+    {
+        $unreadMessageCount = 0;
+
+        foreach ($this->getMessages() as $message) {
+            if (!$message->isIsRead()) {
+                $unreadMessageCount++;
+            }
+        }
+
+        return $unreadMessageCount;
+    }
 }

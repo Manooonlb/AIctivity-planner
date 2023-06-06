@@ -8,6 +8,8 @@ use App\Entity\Activity;
 use App\Entity\Conversation;
 use App\Repository\ActivityRepository;
 use App\Repository\ConversationRepository;
+use App\Repository\MessageRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,37 +18,43 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Symfony\Component\Security\Core\Security;
 
 class MessageController extends AbstractController
 {
+
     #[Route('app/activity/{id}/contact', name: 'app_message')]
     #[IsGranted('ROLE_USER')]
-    public function index(Activity $activity, ConversationRepository $conversationRepository): Response
+    public function index(Activity $activity, ConversationRepository $conversationRepository, Security $security, EntityManager $entityManager): Response
     {
-        /** @var User */
-        $user = $this->getUser();
-        if($activity->getOwner()->getId() === $user->getId())
-        {
+        $user = $security->getUser();
+        if ($activity->getOwner() === $user) {
             return $this->redirectToRoute('app_activity_index');
         }
-        $conversation = $conversationRepository->findOneBy(['activity' => $activity,'activityParticipant' => $user]);
-        if (!$conversation)
-        {
+    
+        $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
+        if (!$conversation) {
             $conversation = new Conversation();
             $conversation->setActivity($activity)
                 ->setActivityParticipant($user)
                 ->setActivityOwner($activity->getOwner());
-                ;
-            $conversationRepository->save($conversation, true);    
-            dump($conversation);
+            $conversationRepository->save($conversation, true);
+        } else {
+            // Mark all messages in the conversation as read
+            foreach ($conversation->getMessages() as $message) {
+                $message->setIsRead(true);
+            }
+            $conversationRepository->save($conversation, true);
         }
+    
+        return $this->redirectToRoute('app_show_conversation', ['id' => $conversation->getId()]);
 
-        return $this->redirectToRoute("app_show_conversation",['id'=>$conversation->getId()]);
     }
+    
 
     #[Route('app/conversations/{id}', name: 'app_show_conversation')]
     #[IsGranted('ROLE_USER')]
-    public function showConversation(Conversation $conversation, HubInterface $hub) : Response
+    public function showConversation(Conversation $conversation, HubInterface $hub, MessageRepository $messageRepository, EntityManagerInterface $entityManagerInterface) : Response
     {
          /** @var User */
          $user = $this->getUser();
@@ -56,6 +64,7 @@ class MessageController extends AbstractController
         ) {
             dd('degage');
         }
+        $entityManagerInterface->beginTransaction();
         // dd($user->getConversationsActivitiesOwners()->count());
         foreach ($conversation->getMessages() as $message)
         {
@@ -63,6 +72,7 @@ class MessageController extends AbstractController
             if ($message->isIsRead(false)) {
                 // Marquer le message comme lu
                 $message->setIsRead(true);
+                $messageRepository->save($message, true);
 
                 // Publier une mise à jour Mercure pour informer les clients de la modification
                 $update = new Update(
@@ -72,7 +82,7 @@ class MessageController extends AbstractController
                 $hub->publish($update);
             }
         }
-       
+       $entityManagerInterface->commit();
         return $this->render('message/index.html.twig', [
             'conversation' => $conversation,
             'allConversations' =>[
@@ -82,21 +92,6 @@ class MessageController extends AbstractController
         ]);
     }
 
-
-    #[Route('app/conversations', name: 'app_show_all_conversations')]
-    #[IsGranted('ROLE_USER')]
-    public function showAllConversations() : Response
-    {
-         /** @var User */
-         $user = $this->getUser();
-       
-        return $this->render('message/conversations.html.twig', [
-            'allConversations' =>[
-                ...$user->getConversationsActivitiesOwners()->getValues(),
-                ...$user->getConversationsActivitiesParticipants()->getValues()
-            ],
-        ]);
-    }
 
     #[Route('app/received', name: 'app_received')]
     #[IsGranted('ROLE_USER')]
