@@ -34,11 +34,8 @@
             {% if is_granted('ROLE_USER') %}
               
               {% set unreadTotal = app.user.getUnreadMessageCount() %}
-              {% set conversationsReceived = app.user.getConversationsActivitiesParticipants()|length %}
 
-              {% if conversationsReceived > 0 %}
                 <a type="favicon" href="{{ path('app_show_all_conversations') }}" class="far fa-paper-plane"></a>
-              {% endif %}
 
               {% if unreadTotal > 0 %}   
                 <span id="conversation-unread" class="badge bg-danger rounded-pill float-end">{{ unreadTotal }}</span>
