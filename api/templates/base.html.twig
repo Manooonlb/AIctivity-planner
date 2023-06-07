@@ -84,16 +84,17 @@
 					}
 					const uri = {{ app.user.id }};
 					
-					const date = new Date(data.createdAt).toUTCString();
+					const date = new Date(data.createdAt).toLocaleTimeString();
 				
 
 					const messageBubbleTemplate = document.createElement('messageBubbleTemplate');
 					messageBubbleTemplate.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
+						<p class="fw-bold mb-0">${data.sent.username }</p>
 						<img src="/avatars/{{ app.user.avatarPath }}"
-						alt="avatar 1" style="width: 45px; height: 100%;">
+						alt="avatar 1" class="message-avatar" alt="avatar 1">
 						<div>
-							<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: ${sender === uri ? "#f5f6f7" : "rgba(129,198,190,1)"};">${data.content}</p>
-							<p class="small ms-3 mb-3 rounded-3 text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
+							<p class="small p-2 ms-3 mb-1 rounded-3" style=" background-color: ${sender === uri ? "rgba(181,151,209,1)" : "rgba(129,198,190,1)"};">${data.content}</p>
+							<p class="small ms-3 mb-3 rounded-3 text-muted text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
 						</div>
 					</div>`;
 					element.appendChild(messageBubbleTemplate);
@@ -105,7 +106,7 @@
 					}
 				}
 
-				const updateSideMessageNotification = (data) => {
+				 {# const updateSideMessageNotification = (data) => {
 					if (data.sent.id != {{ app.user.id }} && notificationCount) {
 					notificationCount.innerText = +notificationCount.innerText + 1;
 					}
@@ -120,7 +121,7 @@
 										<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
 									</div>
 									<div class="pt-1">
-										<p class="fw-bold mb-0"></p>
+										<p class="fw-bold mb-0">{{app.</p>
 										<p class="small text-muted"></p>
 									</div>
 								</div>
@@ -130,11 +131,26 @@
 								</div>
 							</a>
 						</li>`;
-					}
-				}
+					} #} 
+				{# } 
 				
 
-		
+			{# function sendMessage() {
+        		var inputField = document.getElementById("message-input");
+        		var message = inputField.value;
+        		{% if conversation.activityOwner.id is same as (app.user.id) %}
+            		messageTarget = sender;
+        		{% else %}
+            		messageTarget = {{ conversation.activityOwner.id }};
+        		{% endif %}
+
+        		const messageData = {
+				content: message,
+				conversation: "/conversations/{{ conversation.id }}",
+				recipient: "/users/" + messageTarget,
+				sent: "/users/{{ app.user.id }}"
+        		}
+			}; #}
 			{% endif %}
 
 			eventSource.onmessage = event => {
@@ -153,6 +169,8 @@
 				{% else %}
 
 					updateHeaderMessageNotification(data)
+					
+					
 
 				{% endif %}
 			};

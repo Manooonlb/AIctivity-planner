@@ -20,6 +20,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class MessageController extends AbstractController
 {
@@ -33,6 +34,7 @@ class MessageController extends AbstractController
             return $this->redirectToRoute('app_activity_index');
         }
     
+        // $conversation = $conversationRepository->findForGivenUserOrCreate($activity, $user);
         $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
         if (!$conversation) {
             $conversation = new Conversation();
@@ -40,13 +42,11 @@ class MessageController extends AbstractController
                 ->setActivityParticipant($user)
                 ->setActivityOwner($activity->getOwner());
             $conversationRepository->save($conversation, true);
-        } else {
-            // Mark all messages in the conversation as read
-            foreach ($conversation->getMessages() as $message) {
-                $message->setIsRead(true);
-            }
-            $conversationRepository->save($conversation, true);
         }
+        foreach ($conversation->getMessages() as $message) {
+            $message->setIsRead(true);
+        }
+        $conversationRepository->save($conversation, true);
     
         return $this->redirectToRoute('app_show_conversation', ['id' => $conversation->getId()]);
 

@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Activity;
 use App\Entity\Conversation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,28 +41,28 @@ class ConversationRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Conversation[] Returns an array of Conversation objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findForGivenUserOrCreate(Activity $activity, User $user): Conversation
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.activity = :activity')
+            ->setParameter('activity', $activity)
+            ->andWhere('c.activityParticipant = :user')
+            ->andWhere('c.activityOwner = :owner')
+            ->setParameter('user', $user)
+            ->setParameter('owner', $activity->getOwner());
 
-//    public function findOneBySomeField($value): ?Conversation
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $result = $qb->getQuery()->getResult();
+
+        if (count($result) === 1) {
+            return $result[0];
+        }
+
+        $conversation = new Conversation();
+        $conversation->setActivity($activity)
+            ->setActivityParticipant($user)
+            ->setActivityOwner($activity->getOwner());
+        $this->save($conversation, true);
+
+        return $conversation;
+    }
 }
