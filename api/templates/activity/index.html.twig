@@ -1,5 +1,62 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Activity index{% endblock %}
+
+{% block body %}
+	<div class="d-flex justify-content-center"> 
+		<a href="{{ path('app_activity_new') }}" class="btn custom-button-activity">Create new activity</a>
+	</div>
+
+	<div class="d-flex justify-content-center">
+		<h1>or join activity:</h1>
+	</div>
+
+	<div class="row row-cols-2 row-cols-md-3">
+		{% set imageIndex = 1 %}
+		{% for activity in activities %}
+			{% set imagePath = '/images/activities/image' ~ imageIndex ~ '.jpg' %}
+			<div class="col mb-4">
+				<div class="card h-100">
+					<!--Card image-->
+					<div class="view overlay">
+						<img class="card-img-top l-50" src="{{ imagePath }}" alt="Card image cap" />
+					</div>
+
+					<!--Card content-->
+					<div class="card-body">
+						<!--Title-->
+						<h4 class="card-title">{{ activity.name }} / {{ activity.date ? activity.date|date('Y-m-d') : '' }}</h4>
+						<!--Text-->
+						<p class="card-text">
+							⏰{{ activity.startingTime ? activity.startingTime|date('H:i:s') : '' }}<br>
+							{{ activity.description }}<br>
+							Organized by: {{ activity.owner.getUsername }}<br>
+							with {{ activity.numberOfParticipants }} participants<br>
+							in {{ activity.location }}
+						</p>
+						<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+						<a href="{{ path('app_message', {'id': activity.id}) }}" class="btn custom-button-activity">
+							CONTACT {{ activity.owner.getUsername }}
+						</a>
+						<a href="{{ path('app_activity_edit', {'id': activity.id}) }}" class="btn btn-light-blue btn-md">Edit</a>
+						{% if app.user.id == activity.owner.id %}
+							{# <a href="{{ path('app_activity_show', {'id': activity.id}) }}" class="btn custom-button-activity">Show</a> #}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			{% set imageIndex = imageIndex + 1 %}
+			{% if imageIndex > 7 %}
+				{% set imageIndex = 1 %}
+			{% endif %}
+		{% endfor %}
+	</div>
+{% endblock %}
+
+
+
+{# {% extends 'base.html.twig' %}
+
 {% block title %}Activity index
 {% endblock %}
 
@@ -18,31 +75,33 @@
 	{% for activity in activities %}
 		
 			<div class="col mb-4">
-				<div
-					class="card h-100">
+				<div class="card h-100">
 					<!--Card image-->
 					<div class="view overlay">
+
+
 						<img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/16.webp" alt="Card image cap" />
+
 					</div>
 
 					<!--Card content-->
-					<div
-						class="card-body">
+					<div class="card-body">
 
 						<!--Title-->
-						<h4 class="card-title">{{ activity.name }}
-							-
+						<h4 class="card-title">{{ activity.name }} /
 							{{ activity.date ? activity.date|date('Y-m-d') : '' }}</h4>
 						<!--Text-->
 						<p class="card-text">⏰{{ activity.startingTime ? activity.startingTime|date('H:i:s') : '' }}
 							<br>{{ activity.description }}
-							-
 							<br>Organized by :
 							{{ activity.owner.getUsername }}
 							<br>
 							with
 							{{ activity.numberOfParticipants }}
 							participants
+							<br>
+							in
+							{{ activity.location }}
 						</p>
 						<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
 						<a href="{{ path('app_message', {'id': activity.id})}}" class="btn custom-button-activity">
@@ -52,14 +111,14 @@
 						{% if app.user.id == activity.owner.id %}
 								{# <a href="{{ path('app_activity_show', {'id': activity.id}) }}" button class="btn custom-button-activity">Show</a> #}
 			
-						{% endif %}
+						{# {% endif %}
 					</div>
 				</div>
 			</div>
 		
 	{% endfor %}
-
 </div>
+{% endblock %} #} 
 
 	{# {% for activity in activities %}
 		<tr>
@@ -91,4 +150,3 @@
 		</tr>
 	{% endfor %} #}
 
-{% endblock %}
