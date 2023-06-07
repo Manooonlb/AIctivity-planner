@@ -49,6 +49,22 @@
 																onclick="return confirm('This conversation will be destroyed for ever. Are U sure ? 🪦')"
 															>
 															</a>
+												{% if item.activityParticipant.id == app.user.id %}
+																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
+												{% endif %}
+																<p class="small text-muted"></p>
+											<a href="{{ path('app_delete_conversation', {'id': conversation.id}) }}" onclick="return confirm('This conversation will be destroyed for ever. Are U sure ? 🪦')">
+											</a>
+															</div>
+														
+														<div class="pt-1">
+															{% if item.activityParticipant.id == app.user.id %}
+																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
+															{% endif %}
+															{% if item.activityOwner.id == app.user.id %}
+																<p class="fw-bold mb-0">{{ item.activityParticipant.username }}</p>
+															{% endif %}
+															<p class="small text-muted">{{item.createdAt|date('H:i:s')}}</p>
 														</div>
 													
 													</a>
