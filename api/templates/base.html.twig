@@ -135,7 +135,22 @@
 				{# } 
 				
 
-		
+			{# function sendMessage() {
+        		var inputField = document.getElementById("message-input");
+        		var message = inputField.value;
+        		{% if conversation.activityOwner.id is same as (app.user.id) %}
+            		messageTarget = sender;
+        		{% else %}
+            		messageTarget = {{ conversation.activityOwner.id }};
+        		{% endif %}
+
+        		const messageData = {
+				content: message,
+				conversation: "/conversations/{{ conversation.id }}",
+				recipient: "/users/" + messageTarget,
+				sent: "/users/{{ app.user.id }}"
+        		}
+			}; #}
 			{% endif %}
 
 			eventSource.onmessage = event => {
