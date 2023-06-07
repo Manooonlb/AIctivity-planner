@@ -91,7 +91,7 @@
 					messageBubbleTemplate.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
 						<p class="fw-bold mb-0">${data.sent.username }</p>
 						<img src="/avatars/{{ app.user.avatarPath }}"
-						alt="avatar 1" style="width: 45px; height: 100%;" alt="avatar 1" style="width: 45px; height: 100%;">
+						alt="avatar 1" class="message-avatar" alt="avatar 1">
 						<div>
 							<p class="small p-2 ms-3 mb-1 rounded-3" style=" background-color: ${sender === uri ? "rgba(181,151,209,1)" : "rgba(129,198,190,1)"};">${data.content}</p>
 							<p class="small ms-3 mb-3 rounded-3 text-muted text-muted float-${sender === uri ? "end" : "start"}">${date}</p>
