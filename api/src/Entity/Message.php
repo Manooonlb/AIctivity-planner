@@ -112,6 +112,9 @@ class Message
         return $this;
     }
 
+    /**
+     * @Groups({"message_notification"})
+     */
     public function getSent(): ?User
     {
         return $this->sent;
