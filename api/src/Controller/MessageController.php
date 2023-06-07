@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -102,35 +103,42 @@ class MessageController extends AbstractController
          ];
 
          if (!count($conversations)) {
-            return $this->redirectToRoute($request->headers->get('referer'));
+            return $this->redirectToRoute('app_home');
          }
 
         return $this->redirectToRoute('app_show_conversation', ['id' => $conversations[0]->getId()]);
     }
 
 
-
-
-    #[Route('app/received', name: 'app_received')]
+    #[Route('app/conversations/{id}/delete', name: 'app_delete_conversation')]
     #[IsGranted('ROLE_USER')]
-    public function received(): Response
-    {
-        return $this->render('message/received.html.twig');
+    public function deleteConversation(
+        Conversation $conversation,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManagerInterface,
+        Request $request
+    ) : RedirectResponse {
+         /** @var User */
+         $user = $this->getUser();
+
+         $conversations = [
+            ...$user->getConversationsActivitiesOwners()->getValues(),
+            ...$user->getConversationsActivitiesParticipants()->getValues()
+         ];
+
+        if(
+            $conversation->getActivityOwner() !== $user
+            && $conversation->getActivityParticipant() !== $user
+        ) {
+            return $this->redirectToRoute($request->headers->get('referer'));
+        };
+
+            $entityManagerInterface->remove($conversation);
+            $entityManagerInterface->flush();
+
+        return $this->redirectToRoute('app_show_all_conversations');
+
     }
 
-
-    #[Route('app/show', name: 'app_show')]
-    #[IsGranted('ROLE_USER')]
-    public function show(Message $message, EntityManagerInterface $entityManager): Response
-    {
-        $message->getRecipient();
-        $message->getSent();
-        $message->getCreatedAt();
-
-        $entityManager->persist($message);
-        $entityManager->flush();
-
-        return $this->render('message/show.html.twig', compact("message"));
-    }
 }
 

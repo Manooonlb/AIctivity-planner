@@ -36,6 +36,8 @@
 																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
                                 {% endif %}
 																<p class="small text-muted"></p>
+                                <a href="{{ path('app_delete_conversation', {'id': conversation.id}) }}" onclick="return confirm('Voulez-vous vraiment supprimer cette conversation ?')">Supprimer</a>
+
 															</div>
 														</div>
 														<div class="pt-1">

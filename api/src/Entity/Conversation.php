@@ -20,7 +20,7 @@ class Conversation
     #[Groups(['message_notification'])]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class)]
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, cascade : ['remove'])]
     private Collection $messages;
 
     #[ORM\ManyToOne(inversedBy: 'conversations')]
