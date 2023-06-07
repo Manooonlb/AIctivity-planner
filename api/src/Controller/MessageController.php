@@ -16,16 +16,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
-use Symfony\Component\Security\Core\Security;
 
 class MessageController extends AbstractController
 {
 
     #[Route('app/activity/{id}/contact', name: 'app_message')]
     #[IsGranted('ROLE_USER')]
-    public function index(Activity $activity, ConversationRepository $conversationRepository, Security $security, EntityManager $entityManager): Response
+    public function index(Activity $activity, ConversationRepository $conversationRepository, Security $security, EntityManagerInterface $entityManagerInterface): Response
     {
         $user = $security->getUser();
         if ($activity->getOwner() === $user) {
