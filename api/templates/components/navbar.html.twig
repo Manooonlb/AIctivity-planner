@@ -35,7 +35,7 @@
               
                 {% set unreadMessageCount = app.user.getUnreadMessageCount() %}
                 {% set activityId = 1 %} {# ID de l'activité par défaut #}
-                    <a type="favicon" href="{{path('app_message',{'id':activityId})}}" class="far fa-paper-plane"></a>
+                    <a type="favicon" href="{{path('app_show_all_conversations')}}" class="far fa-paper-plane"></a>
                 {% if unreadMessageCount > 0 %}    
                     <span id="conversation-unread"class="badge bg-danger rounded-pill float-end">{{ unreadMessageCount }}</span>
                 {% endif %}

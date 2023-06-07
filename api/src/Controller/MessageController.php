@@ -92,6 +92,48 @@ class MessageController extends AbstractController
         ]);
     }
 
+    #[Route('app/conversations', name: 'app_show_all_conversations')]
+    #[IsGranted('ROLE_USER')]
+    public function showAllConversations(Conversation $conversation, HubInterface $hub, MessageRepository $messageRepository, EntityManagerInterface $entityManagerInterface) : Response
+    {
+         /** @var User */
+         $user = $this->getUser();
+        if(
+            $conversation->getActivityOwner() !== $user
+            && $conversation->getActivityParticipant() !== $user
+        ) {
+            dd('degage');
+        }
+        $entityManagerInterface->beginTransaction();
+        // dd($user->getConversationsActivitiesOwners()->count());
+        foreach ($conversation->getMessages() as $message)
+        {
+                // Vérifier si le message n'a pas encore été lu
+            if ($message->isIsRead(false)) {
+                // Marquer le message comme lu
+                $message->setIsRead(true);
+                $messageRepository->save($message, true);
+
+                // Publier une mise à jour Mercure pour informer les clients de la modification
+                $update = new Update(
+                sprintf('/messages/%d', $message->getId()),
+                json_encode(['isRead' => true])
+            );
+                $hub->publish($update);
+            }
+        }
+       $entityManagerInterface->commit();
+        return $this->render('message/index.html.twig', [
+            'conversation' => $conversation,
+            'allConversations' =>[
+                ...$user->getConversationsActivitiesOwners()->getValues(),
+                ...$user->getConversationsActivitiesParticipants()->getValues()
+            ],
+        ]);
+    }
+
+
+
 
     #[Route('app/received', name: 'app_received')]
     #[IsGranted('ROLE_USER')]
