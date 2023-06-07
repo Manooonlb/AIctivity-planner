@@ -36,19 +36,17 @@ class MessageController extends AbstractController
     
         // $conversation = $conversationRepository->findForGivenUserOrCreate($activity, $user);
         $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
-        if (!$conversation && !$user) {
+        if (!$conversation) {
             $conversation = new Conversation();
             $conversation->setActivity($activity)
                 ->setActivityParticipant($user)
                 ->setActivityOwner($activity->getOwner());
             $conversationRepository->save($conversation, true);
-        } else {
-            // Mark all messages in the conversation as read
-            foreach ($conversation->getMessages() as $message) {
-                $message->setIsRead(true);
-            }
-            $conversationRepository->save($conversation, true);
         }
+        foreach ($conversation->getMessages() as $message) {
+            $message->setIsRead(true);
+        }
+        $conversationRepository->save($conversation, true);
     
         return $this->redirectToRoute('app_show_conversation', ['id' => $conversation->getId()]);
 
