@@ -67,14 +67,17 @@
 							<div class="col-md-6 col-lg-7 col-xl-8">
 								<div id="message-box-{{ conversation.id }}" class="pt-3 pe-3" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 									{% for message in conversation.messages %}
+
 										<div class="d-flex flex-row justify-content-{{message.sent.id == app.user.id ? 'end' : 'start'}}">
 										<p class="fw-bold mb-0">{{ message.sent.username }}</p>
 											<img src="/avatars/{{ message.sent.avatarPath }}" alt="avatar 1" style="width: 45px; height: 100%;">
 											<div>
-												<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: rgba(129,198,190,1)">{{ message.content }}</p>
-												<p class="small ms-3 mb-3 rounded-3 text-muted float-start">{{ message.createdAt|date('H:i:s') }}</p>
+												<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: {{message.sent.id == app.user.id ? 'rgba(181,151,209,1)' : 'rgba(129,198,190,1)'}}">{{ message.content }}</p>
+												<p class="small ms-3 mb-3 rounded-3 text-muted float-{{message.sent.id == app.user.id ? 'end' : 'start'}}">{{ message.createdAt|date('H:i:s') }}</p>
 											</div>
 										</div>
+
+										
 									{% endfor %}
 				
 								</div>

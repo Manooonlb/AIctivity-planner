@@ -20,6 +20,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class MessageController extends AbstractController
 {
@@ -35,7 +36,7 @@ class MessageController extends AbstractController
     
         // $conversation = $conversationRepository->findForGivenUserOrCreate($activity, $user);
         $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
-        if (!$conversation) {
+        if (!$conversation && !$user) {
             $conversation = new Conversation();
             $conversation->setActivity($activity)
                 ->setActivityParticipant($user)
