@@ -21,44 +21,37 @@
 									</div>
 									<div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 										<ul class="list-unstyled mb-0">
-                    
-                    <li class="p-2 border-bottom">
-
-											{% for item in allConversations %}
+											<li class="p-2 border-bottom">
+												{% for item in allConversations %}
 													<a href="{{ path('app_show_conversation', {'id': item.id})}}" class="d-flex justify-content-between">
 														<div class="d-flex flex-row">
-														{% if item.activityParticipant.id == app.user.id %}
-															<div>
-																<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
-										
-															</div>
+															{% if item.activityParticipant.id == app.user.id %}
+																<div>
+																	<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3 message-avatar" width="60">
+																</div>
 															{% endif %}
 															<div class="pt-1">
-												{% if item.activityParticipant.id == app.user.id %}
-																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
-												{% endif %}
+																{% if item.activityParticipant.id == app.user.id %}
+																	<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
+																{% endif %}
 																<p class="small text-muted"></p>
-											<a href="{{ path('app_delete_conversation', {'id': conversation.id}) }}" onclick="return confirm('Voulez-vous vraiment supprimer cette conversation ?')">Supprimer</a>
-
+																<a href="{{ path('app_delete_conversation', {'id': conversation.id}) }}" onclick="return confirm('Voulez-vous vraiment supprimer cette conversation ?')">Supprimer</a>
 															</div>
-														
-														<div class="pt-1">
-															{% if item.activityParticipant.id == app.user.id %}
-																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
-															{% endif %}
-															<p class="small text-muted">{{item.createdAt|date('H:i:s')}}</p>
+															<div class="pt-1">
+																{% if item.activityParticipant.id == app.user.id %}
+																	<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
+																{% endif %}
+																<p class="small text-muted">{{item.createdAt|date('H:i:s')}}</p>
+															</div>
 														</div>
-													</div>
-													<div class="d-flex flex-row align-items-center justify-content-between">
-														<a class="far fa-circle-xmark ms-3 justify-content-between" style="color: #e32400;" href="{{ path('app_delete_conversation', {'id': item.id}) }}" onclick="return confirm('This conversation will disappear forever... Are you sure?')"></a>
-														{% set unreadTotal = app.user.getAllUnreadMessageForConversationCount(item) %}
-														<span id="conversation-{{ item.id }}-unread" class="badge bg-danger rounded-pill">{{ unreadTotal > 0 ? unreadTotal : '' }}</span>
-													</div>
-												</a>
-
-											{% endfor %}
-                    </li>
-                    
+														<div class="d-flex flex-row align-items-center justify-content-between">
+															<a class="far fa-circle-xmark ms-3 justify-content-between" style="color: #e32400;" href="{{ path('app_delete_conversation', {'id': item.id}) }}" onclick="return confirm('This conversation will disappear forever... Are you sure?')"></a>
+															{% set unreadTotal = app.user.getAllUnreadMessageForConversationCount(item) %}
+															<span id="conversation-{{ item.id }}-unread" class="badge bg-danger rounded-pill">{{ unreadTotal > 0 ? unreadTotal : '' }}</span>
+														</div>
+													</a>
+												{% endfor %}
+											</li>
 										</ul>
 									</div>
 								</div>
@@ -67,17 +60,17 @@
 								<div id="message-box-{{ conversation.id }}" class="pt-3 pe-3" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 									{% for message in conversation.messages %}
 										<div class="d-flex flex-row justify-content-{{message.sent.id == app.user.id ? 'end' : 'start'}}">
-										<p class="fw-bold mb-0">{{ message.sent.username }}</p>
-											<img src="/avatars/{{ message.sent.avatarPath }}" alt="avatar 1" style="width: 45px; height: 100%;">
+											<img src="/avatars/{{ message.sent.avatarPath }}" alt="avatar 1" class="message-avatar">
 											<div>
-												<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7">{{ message.content }}</p>
+												<p class="fw-bold mb-0">{{ message.sent.username }}</p>
+												<p class="small p-2 ms-3 mb-1 rounded-3 message-content" style="background-color: #f5f6f7">{{ message.content }}</p>
 												<p class="small ms-3 mb-3 rounded-3 text-muted float-start">{{ message.createdAt|date('H:i:s') }}</p>
 											</div>
 										</div>
 									{% endfor %}
 								</div>
 								<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" style="width: 40px; height: 100%;">
+									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" class="message-avatar">
 									<input type="text" class="form-control form-control-lg" id="message-input" id="exampleFormControlInput2" placeholder="Type message">
 									<a class="ms-1 text-muted" href="#!">
 										<i class="fas fa-paperclip"></i>
@@ -86,7 +79,7 @@
 										<i class="fas fa-smile"></i>
 									</a>
 									<a id="button-addon2" class="ms-3" role="button" >
-										<i class="fas fa-paper-plane"></i>
+											<i class="fas fa-paper-plane"></i>
 									</a>
 								</div>
 							</div>
