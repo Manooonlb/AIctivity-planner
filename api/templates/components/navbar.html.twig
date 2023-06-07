@@ -32,14 +32,16 @@
       <div class="d-flex align-items-center ms-auto">
       
             {% if is_granted('ROLE_USER') %}
-            
-                <a type="favicon" href="" class="far fa-paper-plane"</a>
+              
+              {% set unreadTotal = app.user.getUnreadMessageCount() %}
+
+                <a type="favicon" href="{{ path('app_show_all_conversations') }}" class="far fa-paper-plane"></a>
+
+                <span id="conversation-unread" class="badge bg-danger rounded-pill float-end">{{ unreadTotal ? unreadTotal : '' }}</span>
+
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_profile_my') }}">My profile</a>
 
-                <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_my') }}">My Activities</a>
-
-
-<a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_index') }}">Activities</a>
+                <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_activity_index') }}">Activities</a>
 
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item"  href="{{ path('app_logout') }}">Logout</a>
 

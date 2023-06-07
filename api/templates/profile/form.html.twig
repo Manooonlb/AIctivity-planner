@@ -1,42 +1,124 @@
-<!-- profile/form.html.twig -->
-<section class="vh-100" style="background-color: #f4f5f7;">
-{# <form action="{{ path('app_profile_edit') }}" method="POST">
-  <div class="mb-3">
-    <label for="username" class="form-label">Username</label>
-    <input type="text" class="form-control" id="username" name="username" value="{{ app.user.username }}" required>
-  </div>
-  <div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" id="email" name="email" value="{{ app.user.email }}" required>
-  </div>
-  <div class="mb-3">
-    <label for="birthday" class="form-label">Birthday</label>
-    <input type="date" class="form-control" id="birthday" name="birthday">
-  </div>
-  <button type="submit" class="btn btn-primary">{{ button_label }}</button>
-</form> #}
+{# {% extends 'base.html.twig' %}
+{% block body %}
+
 {{ form_start(form) }}
-                <div class="form-group">
-					{{ form_row(form.username, {
-                        'attr': {'class': 'form-control', 'placeholder': 'name'}
-                        }) 
-                    }}
-				</div> 
-                <div class="form-group">
-					{{ form_row(form.email, {
-                        'attr': {'class': 'form-control', 'placeholder': 'description'}
-                        }) 
-                    }}
-				</div> 
-                 <div class="form-group">
-					{{ form_row(form.birthday, {
-                        'attr': {'class': 'form-control', 'placeholder': 'date'}
-                        }) 
-                    }}
+
+<div class="d-flex justify-content-center align-items-center h-100">
+	<div class="col-lg-8">
+		<div class="card mb-4">
+			<div class="card-body gradient-custom rounded-6">
+				<div class="row">
+					<div class="col-sm-3">
+						<p class="mb-0">Name</p>
+					</div>
+					<div class="col-sm-9">
+						{{ form_widget(form.username) }}
+					</div>
 				</div>
-
-
-      <button class="btn">{{ button_label|default('Save') }}</button> 
-
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+						<p class="mb-0">Email</p>
+					</div>
+					<div class="col-sm-9">
+						{{ form_widget(form.email, {'label': 'Email'}) }}
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+						<p class="mb-0">Birthdate</p>
+					</div>
+					<div class="col-sm-9">
+						{{ form_widget(form.birthday, {'label': 'Birthday'}) }}
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+						<p class="mb-0">Profile picture</p>
+					</div>
+					<div class="col-sm-9">
+						{{ form_widget(form.imageFile, {
+                    'attr': {'class': 'form-control col-md-6', 'accept': 'image/*'}}) }}
+					</div>
+				</div>
+				<hr>
+				<div class="d-flex justify-content-center">
+					<button class="btn btn-custom-profile">{{ button_label|default('Save') }}</button>
+				</div>
+				<hr>
+				<a class="d-flex justify-content-center" href="{{ path('app_profile_my') }}">Back to profile</a>
+			</div>
+	</div>
+</div>
 {{ form_end(form) }}
+
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-lg-6">
+        <div class="card mb-4" style="border-radius: .5rem;">
+          <div class="card-body p-4 gradient-custom rounded-6">
+            {{ form_start(form) }}
+            
+            <div class="row mb-3">
+              <div class="col-sm-3">
+                <p class="mb-0">Name</p>
+              </div>
+              <div class="col-sm-9">
+                {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+              </div>
+            </div>
+            <hr>
+            <div class="row mb-3">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+              </div>
+            </div>
+            <hr>
+            <div class="row mb-3">
+              <div class="col-sm-3">
+                <p class="mb-0">Birthdate</p>
+              </div>
+              <div class="col-sm-9">
+                {{ form_widget(form.birthday, {'attr': {'class': 'form-control'}}) }}
+              </div>
+            </div>
+            <hr>
+            <div class="row mb-3">
+              <div class="col-sm-3">
+                <p class="mb-0">Profile picture</p>
+              </div>
+              <div class="col-sm-9">
+                {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+              </div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-custom-profile">{{ button_label|default('Save') }}</button>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-center">
+              <a href="{{ path('app_profile_my') }}">Back to profile</a>
+            </div>
+            
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
+{% endblock %}
+

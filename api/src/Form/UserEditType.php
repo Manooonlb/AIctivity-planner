@@ -5,8 +5,11 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserEditType extends AbstractType
 {
@@ -18,8 +21,25 @@ class UserEditType extends AbstractType
                 'widget' => 'choice',
                 'years' => range(date('Y') - 90, date('Y')),
             ])
-            ->add('username')
-        ;
+            ->add('username', TextType::class)
+            ->add('imageFile', FileType::class, [
+                'label' => 'Profile Picture',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'accept' => 'image/*',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        // 'mimeTypes' => [
+                        //     'application/jpg',
+                        //     'application/png',
+                        // ],
+                        'mimeTypesMessage' => 'Please upload a valid .jpeg document',
+                    ])
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

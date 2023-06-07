@@ -16,7 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 class ActivityType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+    { 
+        $years = range(date('Y'), date('Y')+2);
         $builder
             ->add('name')
             ->add('description')
@@ -24,7 +25,8 @@ class ActivityType extends AbstractType
             ->add('location')
             ->add('date',DateType::Class, array(
                 'widget' => 'choice',
-                'years' => range(date('Y'), date('Y')+2)
+                'years' => $years,
+            'data' => new \DateTime(),
                 
               ))
             ->add('starting_time')

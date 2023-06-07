@@ -1,6 +1,13 @@
 {
     "cSpell.words": [
+        "editform",
+        "Hasher",
+        "Ictivity",
+        "mercure",
         "myprofile",
         "Upgrader"
+    ],
+    "cSpell.ignoreWords": [
+        "Sensio"
     ]
 }

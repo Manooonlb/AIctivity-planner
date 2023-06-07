@@ -18,7 +18,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
     )
 ])]
 #[ORM\HasLifecycleCallbacks()]
-
 class Message
 {
     #[ORM\Id]
@@ -31,7 +30,7 @@ class Message
     #[Groups(['message_notification'])]
     private ?string $content = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 'false'], nullable: true)]
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: false)]
     #[Groups(['message_notification'])]
     private ?bool $isRead = null;
 
@@ -49,10 +48,15 @@ class Message
     #[Groups(['message_notification'])]
     private ?User $sent = null;
 
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[Groups(['message_notification'])]
+    private ?Conversation $conversation = null;
+
     #[ORM\PrePersist]
     public function onCreate(): void
     {
         $this->setCreatedAt(new \DateTimeImmutable());
+        $this->setIsRead(false);
     }
 
     public function getId(): ?int
@@ -116,6 +120,18 @@ class Message
     public function setSent(?User $sent): self
     {
         $this->sent = $sent;
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
 
         return $this;
     }

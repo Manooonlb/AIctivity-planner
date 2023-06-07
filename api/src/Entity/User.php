@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\ProfilePicture;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
@@ -13,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -41,8 +43,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\LessThan('-18 years', message:'🔞 NOPE TOO YOUNG 🔞')]
+    #[Assert\LessThan('-18 years', message: '🔞 NOPE TOO YOUNG 🔞')]
     private ?\DateTimeInterface $birthday = null;
+
+
+    #[ORM\OneToOne(targetEntity: ProfilePicture::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ProfilePicture $profilePicture = null;
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -67,6 +74,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $sended;
 
     
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarPath = null;
+
+    #[ORM\OneToMany(mappedBy: 'activityOwner', targetEntity: Conversation::class)]
+    private Collection $conversationsActivitiesOwners;
+
+    #[ORM\OneToMany(mappedBy: 'activityParticipant', targetEntity: Conversation::class)]
+    private Collection $conversationsActivitiesParticipants;
 
     public function __construct()
     {
@@ -75,6 +90,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->activityQuestions = new ArrayCollection();
         $this->received = new ArrayCollection();
         $this->sended = new ArrayCollection();
+        $this->conversationsActivitiesOwners = new ArrayCollection();
+        $this->conversationsActivitiesParticipants = new ArrayCollection();
     }
 
 
@@ -148,9 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    
-    
-
     public function getBirthday(): ?\DateTimeInterface
     {
         return $this->birthday;
@@ -159,6 +173,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBirthday(\DateTimeInterface $birthday): self
     {
         $this->birthday = $birthday;
+
+        return $this;
+    }
+
+    public function getProfilePicture(): ?ProfilePicture
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?ProfilePicture $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
 
         return $this;
     }
@@ -186,7 +212,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-   
+
+
     /**
      * @return Collection<int, Activity>
      */
@@ -331,4 +358,100 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    
+        public function getAvatarPath(): ?string
+    {
+        return $this->avatarPath;
+    }
+
+    public function setAvatarPath(?string $avatarPath): self
+    {
+        $this->avatarPath = $avatarPath;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversationsActivitiesOwners(): Collection
+    {
+        return $this->conversationsActivitiesOwners;
+    }
+
+    public function addConversationsActivitiesOwner(Conversation $conversationsActivitiesOwner): self
+    {
+        if (!$this->conversationsActivitiesOwners->contains($conversationsActivitiesOwner)) {
+            $this->conversationsActivitiesOwners->add($conversationsActivitiesOwner);
+            $conversationsActivitiesOwner->setActivityOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversationsActivitiesOwner(Conversation $conversationsActivitiesOwner): self
+    {
+        if ($this->conversationsActivitiesOwners->removeElement($conversationsActivitiesOwner)) {
+            // set the owning side to null (unless already changed)
+            if ($conversationsActivitiesOwner->getActivityOwner() === $this) {
+                $conversationsActivitiesOwner->setActivityOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversationsActivitiesParticipants(): Collection
+    {
+        return $this->conversationsActivitiesParticipants;
+    }
+
+    public function addConversationsActivitiesParticipant(Conversation $conversationsActivitiesParticipant): self
+    {
+        if (!$this->conversationsActivitiesParticipants->contains($conversationsActivitiesParticipant)) {
+            $this->conversationsActivitiesParticipants->add($conversationsActivitiesParticipant);
+            $conversationsActivitiesParticipant->setActivityParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversationsActivitiesParticipant(Conversation $conversationsActivitiesParticipant): self
+    {
+        if ($this->conversationsActivitiesParticipants->removeElement($conversationsActivitiesParticipant)) {
+            // set the owning side to null (unless already changed)
+            if ($conversationsActivitiesParticipant->getActivityParticipant() === $this) {
+                $conversationsActivitiesParticipant->setActivityParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUnreadMessageCount(): int
+    {
+        $unreadMessageCount = 0;
+
+        foreach ($this->getConversationsActivitiesOwners() as $conversation) {
+            $unreadMessageCount += $this->getAllUnreadMessageForConversationCount($conversation);
+        }
+
+        foreach ($this->getConversationsActivitiesParticipants() as $conversation) {
+            $unreadMessageCount += $this->getAllUnreadMessageForConversationCount($conversation);
+        }
+        return $unreadMessageCount;
+    }
+
+    public function getAllUnreadMessageForConversationCount(Conversation $conversation): int
+    {
+        return $conversation->getMessages()->filter(function (Message $message) {
+            return $message->getRecipient()== $this && !$message->isIsRead();
+        })->count();
+    }
+   
+
 }
+

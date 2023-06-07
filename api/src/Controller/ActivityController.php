@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 
 #[Route('/app/activity')]
 #[IsGranted('ROLE_USER')]
@@ -76,22 +78,23 @@ class ActivityController extends AbstractController
         $activity = $activityService->getPrefiledActivity();
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
-    
+
         $session = $request->getSession();
         if ($form->isSubmitted() && $form->isValid()) {
             $activity->setOwner($this->getUser());
             $activityRepository->save($activity, true);
-    
+
             // Réinitialiser la session pour recommencer depuis l'étape 1
             $session->remove('current_step');
-    
-            return $this->redirectToRoute('app_activity_new', [], Response::HTTP_SEE_OTHER);
+
+            // Rediriger vers la liste des activités
+            return $this->redirectToRoute('app_activity_index');
         }
-    
+
         if (!$session->has('current_step')) {
             $session->set('current_step', 1);
         }
-    
+
         return $this->render('activity/new.html.twig', [
             'activity' => $activity,
             'form' => $form->createView(),
