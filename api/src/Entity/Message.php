@@ -30,7 +30,7 @@ class Message
     #[Groups(['message_notification'])]
     private ?string $content = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 'false'], nullable: false)]
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: false)]
     #[Groups(['message_notification'])]
     private ?bool $isRead = null;
 
@@ -56,6 +56,7 @@ class Message
     public function onCreate(): void
     {
         $this->setCreatedAt(new \DateTimeImmutable());
+        $this->setIsRead(false);
     }
 
     public function getId(): ?int

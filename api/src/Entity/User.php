@@ -436,13 +436,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $unreadMessageCount = 0;
 
-        foreach ($this->getReceived() as $message) {
-            if (!$message->isIsRead()) {
-                $unreadMessageCount++;
-            }
+        foreach ($this->getConversationsActivitiesOwners() as $conversation) {
+            $unreadMessageCount += $this->getAllUnreadMessageForConversationCount($conversation);
         }
 
+        foreach ($this->getConversationsActivitiesParticipants() as $conversation) {
+            $unreadMessageCount += $this->getAllUnreadMessageForConversationCount($conversation);
+        }
         return $unreadMessageCount;
+    }
+
+    public function getAllUnreadMessageForConversationCount(Conversation $conversation): int
+    {
+        return $conversation->getMessages()->filter(function (Message $message) {
+            return $message->getRecipient()== $this && !$message->isIsRead();
+        })->count();
     }
    
 

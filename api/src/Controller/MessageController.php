@@ -54,33 +54,30 @@ class MessageController extends AbstractController
 
     #[Route('app/conversations/{id}', name: 'app_show_conversation')]
     #[IsGranted('ROLE_USER')]
-    public function showConversation(Conversation $conversation, HubInterface $hub, MessageRepository $messageRepository, EntityManagerInterface $entityManagerInterface) : Response
-    {
+    public function showConversation(
+        Conversation $conversation,
+        HubInterface $hub,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManagerInterface,
+        Request $request
+    ) : Response {
          /** @var User */
          $user = $this->getUser();
         if(
             $conversation->getActivityOwner() !== $user
             && $conversation->getActivityParticipant() !== $user
         ) {
-            dd('degage');
+            return $this->redirectToRoute($request->headers->get('referer'));
         }
-        $entityManagerInterface->beginTransaction();
-        // dd($user->getConversationsActivitiesOwners()->count());
-        foreach ($conversation->getMessages() as $message)
-        {
-                // Vérifier si le message n'a pas encore été lu
-            if ($message->isIsRead(false)) {
-                // Marquer le message comme lu
-                $message->setIsRead(true);
-                $messageRepository->save($message, true);
 
-                // Publier une mise à jour Mercure pour informer les clients de la modification
-                $update = new Update(
-                sprintf('/messages/%d', $message->getId()),
-                json_encode(['isRead' => true])
-            );
-                $hub->publish($update);
-            }
+        $entityManagerInterface->beginTransaction();
+        foreach ($conversation->getMessages()->filter(function(Message $message) use ($user) {
+            return $message->getRecipient() === $user && !$message->isIsRead();
+        }) as $message)
+        {
+            // Vérifier si le message n'a pas encore été lu
+            $message->setIsRead(true);
+            $messageRepository->save($message, true);
         }
        $entityManagerInterface->commit();
         return $this->render('message/index.html.twig', [
@@ -94,42 +91,21 @@ class MessageController extends AbstractController
 
     #[Route('app/conversations', name: 'app_show_all_conversations')]
     #[IsGranted('ROLE_USER')]
-    public function showAllConversations(Conversation $conversation, HubInterface $hub, MessageRepository $messageRepository, EntityManagerInterface $entityManagerInterface) : Response
+    public function showAllConversations(Request $request) : Response
     {
          /** @var User */
          $user = $this->getUser();
-        if(
-            $conversation->getActivityOwner() !== $user
-            && $conversation->getActivityParticipant() !== $user
-        ) {
-            dd('degage');
-        }
-        $entityManagerInterface->beginTransaction();
-        // dd($user->getConversationsActivitiesOwners()->count());
-        foreach ($conversation->getMessages() as $message)
-        {
-                // Vérifier si le message n'a pas encore été lu
-            if ($message->isIsRead(false)) {
-                // Marquer le message comme lu
-                $message->setIsRead(true);
-                $messageRepository->save($message, true);
 
-                // Publier une mise à jour Mercure pour informer les clients de la modification
-                $update = new Update(
-                sprintf('/messages/%d', $message->getId()),
-                json_encode(['isRead' => true])
-            );
-                $hub->publish($update);
-            }
-        }
-       $entityManagerInterface->commit();
-        return $this->render('message/index.html.twig', [
-            'conversation' => $conversation,
-            'allConversations' =>[
-                ...$user->getConversationsActivitiesOwners()->getValues(),
-                ...$user->getConversationsActivitiesParticipants()->getValues()
-            ],
-        ]);
+         $conversations = [
+            ...$user->getConversationsActivitiesOwners()->getValues(),
+            ...$user->getConversationsActivitiesParticipants()->getValues()
+         ];
+
+         if (!count($conversations)) {
+            return $this->redirectToRoute($request->headers->get('referer'));
+         }
+
+        return $this->redirectToRoute('app_show_conversation', ['id' => $conversations[0]->getId()]);
     }
 
 
