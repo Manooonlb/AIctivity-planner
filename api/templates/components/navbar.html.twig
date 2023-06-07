@@ -33,12 +33,16 @@
       
             {% if is_granted('ROLE_USER') %}
               
-                {% set unreadMessageCount = app.user.getUnreadMessageCount() %}
-                {% set activityId = 1 %} {# ID de l'activité par défaut #}
-                    <a type="favicon" href="{{path('app_show_all_conversations')}}" class="far fa-paper-plane"></a>
-                {% if unreadMessageCount > 0 %}    
-                    <span id="conversation-unread"class="badge bg-danger rounded-pill float-end">{{ unreadMessageCount }}</span>
-                {% endif %}
+              {% set unreadTotal = app.user.getUnreadMessageCount() %}
+              {% set conversationsReceived = app.user.getConversationsActivitiesParticipants()|length %}
+
+              {% if conversationsReceived > 0 %}
+                <a type="favicon" href="{{ path('app_show_all_conversations') }}" class="far fa-paper-plane"></a>
+              {% endif %}
+
+              {% if unreadTotal > 0 %}   
+                <span id="conversation-unread" class="badge bg-danger rounded-pill float-end">{{ unreadTotal }}</span>
+              {% endif %}
 
                 <a type="button" class="btn btn-link px-3 me-2 dropdown-item" href="{{ path('app_profile_my') }}">My profile</a>
 
