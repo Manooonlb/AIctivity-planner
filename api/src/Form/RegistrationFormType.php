@@ -20,6 +20,7 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $years = range(date('Y'), date('Y') - 90);
         $builder
         ->add('username', TextType::class, [
             'label' => 'Username',
@@ -28,7 +29,8 @@ class RegistrationFormType extends AbstractType
             ->add('email')
             ->add('birthday', BirthdayType::class, [
                 'widget' => 'choice',
-                'years' => range(date('Y') - 90, date('Y')),
+                'years'=> $years,
+                'data' => new \DateTime(),
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
