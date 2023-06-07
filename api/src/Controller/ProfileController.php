@@ -84,7 +84,6 @@ class ProfileController extends AbstractController
                     return $this->redirectToRoute('app_profile_edit');
                 }
             }
-            $userRepository->save($user, true);
 
             // Redirect to the profile page or display a success message
             return $this->redirectToRoute('app_profile_my');
