@@ -33,6 +33,7 @@ class MessageController extends AbstractController
             return $this->redirectToRoute('app_activity_index');
         }
     
+        // $conversation = $conversationRepository->findForGivenUserOrCreate($activity, $user);
         $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
         if (!$conversation) {
             $conversation = new Conversation();

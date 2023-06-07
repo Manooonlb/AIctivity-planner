@@ -105,7 +105,7 @@
 					}
 				}
 
-				{# const updateSideMessageNotification = (data) => {
+				 {# const updateSideMessageNotification = (data) => {
 					if (data.sent.id != {{ app.user.id }} && notificationCount) {
 					notificationCount.innerText = +notificationCount.innerText + 1;
 					}
@@ -120,7 +120,7 @@
 										<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
 									</div>
 									<div class="pt-1">
-										<p class="fw-bold mb-0">{{app.}}</p>
+										<p class="fw-bold mb-0">{{app.</p>
 										<p class="small text-muted"></p>
 									</div>
 								</div>
@@ -130,8 +130,8 @@
 								</div>
 							</a>
 						</li>`;
-					} #}
-				{# } #}
+					} #} 
+				{# } 
 				
 
 		
@@ -153,6 +153,8 @@
 				{% else %}
 
 					updateHeaderMessageNotification(data)
+					
+					
 
 				{% endif %}
 			};
