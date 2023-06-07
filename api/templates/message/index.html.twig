@@ -27,10 +27,12 @@
 											{% for item in allConversations %}
 													<a href="{{ path('app_show_conversation', {'id': item.id})}}" class="d-flex justify-content-between">
 														<div class="d-flex flex-row">
+														{% if item.activityParticipant.id == app.user.id %}
 															<div>
 																<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
-																<span class="badge bg-warning badge-dot"></span>
+										
 															</div>
+															{% endif %}
 															<div class="pt-1">
 												{% if item.activityParticipant.id == app.user.id %}
 																<p class="fw-bold mb-0">{{ item.activityOwner.username }}</p>
