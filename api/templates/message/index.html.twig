@@ -4,7 +4,9 @@
 
 {% block body %}
 
-<section style="background-color: #CDC4F9;">
+<body class="gradient-custom">
+
+<section>
 	<div class="container py-5">
 		<div class="row">
 			<div class="col-md-12">
@@ -24,7 +26,7 @@
 														<div class="d-flex flex-row">
 														{% if item.activityParticipant.id == app.user.id %}
 															<div>
-																<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
+																<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3 message-avatar" width="60">
 															</div>
 														{% endif %}
 															<div class="pt-1">
@@ -67,7 +69,7 @@
 
 										<div class="d-flex flex-row justify-content-{{message.sent.id == app.user.id ? 'end' : 'start'}}">
 										<p class="fw-bold mb-0">{{ message.sent.username }}</p>
-											<img src="/avatars/{{ message.sent.avatarPath }}" alt="avatar 1" style="width: 45px; height: 100%;">
+											<img src="/avatars/{{ message.sent.avatarPath }}" alt="avatar 1" class="message-avatar" >
 											<div>
 												<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: {{message.sent.id == app.user.id ? 'rgba(181,151,209,1)' : 'rgba(129,198,190,1)'}}">{{ message.content }}</p>
 												<p class="small ms-3 mb-3 rounded-3 text-muted float-{{message.sent.id == app.user.id ? 'end' : 'start'}}">{{ message.createdAt|date('H:i:s') }}</p>
@@ -79,7 +81,7 @@
 				
 								</div>
 								<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" style="width: 40px; height: 100%;">
+									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" class="message-avatar"">
 									<input type="text" class="form-control form-control-lg" id="message-input" id="exampleFormControlInput2" placeholder="Type message">
 									
 								
@@ -95,5 +97,6 @@
 		</div>
 	</div>
 </section>
+</body>
 
 {% endblock %}
