@@ -81,6 +81,7 @@ class MessageController extends AbstractController
             $messageRepository->save($message, true);
         }
        $entityManagerInterface->commit();
+      
         return $this->render('message/index.html.twig', [
             'conversation' => $conversation,
             'allConversations' =>[
