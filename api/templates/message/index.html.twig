@@ -16,7 +16,7 @@
 							<div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
 								<div class="p-3">
 									<div class="input-group rounded mb-3">
-										<p>Your Chat Zone </p>
+										<h2>Your Chat Zone </h2>
 									</div>
 									<div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 										<ul class="list-unstyled mb-0">
@@ -24,17 +24,15 @@
 												{% for item in allConversations %}
 													<a href="{{ path('app_show_conversation', {'id': item.id})}}" class="d-flex justify-content-between"></a>
 														<div class="d-flex flex-row">
-														{% if item.activityParticipant.id == app.user.id %}
 															<div>
-																<img src="/avatars/{{ item.activityOwner.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3 message-avatar" width="60">
+																<img src="/avatars/{{ item.activityParticipant.id == app.user.id ? item.activityOwner.avatarPath : item.activityParticipant.avatarPath  }}" alt="avatar" class="d-flex align-self-center me-3 message-avatar" width="60">
 															</div>
-														{% endif %}
 															<div class="pt-1">
 																<a 
 																	href="{{ path('app_show_conversation', {'id': item.id})}}"
 																	class="fw-bold mb-0"
 																	class="fw-bold mb-0"
-																>{{ item.activityParticipant.id == app.user.id ? item.activityOwner.username : item.activityParticipant.username }} </a>
+																> {{ item.activityParticipant.id == app.user.id ? item.activityOwner.username : item.activityParticipant.username }} </a>
 																{# <p class="fw-bold mb-0">{{ item.activityParticipant.username }}</p> #}
 																<p class="small text-muted">{{item.createdAt|date('H:i:s')}}</p>
 															</div>
