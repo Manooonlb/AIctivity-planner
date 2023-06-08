@@ -79,7 +79,7 @@
 				
 								</div>
 								<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-									<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar 3" class="message-avatar"">
+									<img src= "{{ app.user.avatarPath ? ('/avatars/' ~ app.user.avatarPath) : '/images/avatar_defaut.png' }}" alt="avatar 3" class="message-avatar">
 									<input type="text" class="form-control form-control-lg" id="message-input" id="exampleFormControlInput2" placeholder="Type message">
 									
 								
