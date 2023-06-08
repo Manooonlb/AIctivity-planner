@@ -36,6 +36,7 @@ class MessageController extends AbstractController
     
         // $conversation = $conversationRepository->findForGivenUserOrCreate($activity, $user);
         $conversation = $conversationRepository->findOneBy(['activity' => $activity, 'activityParticipant' => $user]);
+
         if (!$conversation) {
             $conversation = new Conversation();
             $conversation->setActivity($activity)
