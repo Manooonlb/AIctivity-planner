@@ -3,9 +3,11 @@
 {% block title %}Mon profil{% endblock %}
 
 {% block body %}
-<section class="vh-100" style="background-color: #f4f5f7;">
+
+<body class="background-section">
+
   <!-- Existing profile card HTML code -->
-  <section class="vh-100" style="background-color: #f4f5f7;">
+  <section class="vh-100">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col col-lg-6 mb-4 mb-lg-0">
@@ -61,7 +63,8 @@
       </div>
     </div>
   </section>
-</section>
+</body>
+
 <script>
 window.addEventListener('load', function () { //emission d'un event quand la page visitée sera chargée 
 const evtSource = new EventSource("https://localhost/.well-known/mercure?topic=https://localhost/users/" + {{ app.user.id }}); //instanciation de la classe EventSource qui va écouter l'évent 
