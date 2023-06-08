@@ -47,7 +47,6 @@
 				}
 			}
 			{% if conversation is defined %}
-				const element = document.getElementById("message-box-{{ conversation.id }}");	
 				var scrollDiv = document.getElementById("message-box-{{ conversation.id }}");
 					scrollDiv.scrollTop = scrollDiv.scrollHeight;
 				
@@ -79,14 +78,20 @@
 				sendButton.addEventListener("click", sendMessage);
 
 				const addMessageToList = (data, sender) => {
+					if (data.conversation.id !== {{ conversation.id }}) {
+						return;
+					}
+
+					const element = document.getElementById("message-box-{{ conversation.id }}");
+
 					if (!element){
 						return;
 					}
+
 					const uri = {{ app.user.id }};
 					
 					const date = new Date(data.createdAt).toLocaleTimeString();
 				
-
 					const messageBubbleTemplate = document.createElement('messageBubbleTemplate');
 					messageBubbleTemplate.innerHTML = `<div class="d-flex flex-row justify-content-${sender === uri ? "end" : "start"}">
 						<p class="fw-bold mb-0">${data.sent.username }</p>
@@ -99,58 +104,6 @@
 					</div>`;
 					element.appendChild(messageBubbleTemplate);
 				}
-
-				const addMessageToSideList = (data, sender) => {
-					if(!element){
-						return;
-					}
-				}
-
-				 {# const updateSideMessageNotification = (data) => {
-					if (data.sent.id != {{ app.user.id }} && notificationCount) {
-					notificationCount.innerText = +notificationCount.innerText + 1;
-					}
-					const conversationLine = document.getElementById(`conversation-${data.conversation.id}-unread`)
-					console.log(conversationLine);
-					if (!conversationLine){
-						const sideMessageTemplate = document.createElement('sideMessageTemplate');
-						sideMessageTemplate.innerHTML = `<li class="p-2 border-bottom">
-							<a href="#!" class="d-flex justify-content-between">
-								<div class="d-flex flex-row">
-									<div>
-										<img src="/avatars/{{ app.user.avatarPath }}" alt="avatar" class="d-flex align-self-center me-3" width="60">
-									</div>
-									<div class="pt-1">
-										<p class="fw-bold mb-0">{{app.</p>
-										<p class="small text-muted"></p>
-									</div>
-								</div>
-								<div class="pt-1">
-									<p class="small text-muted mb-1">5 mins ago</p>
-									<span id="conversation-${conversation.id}-unread" class="badge bg-danger rounded-pill float-end">5</span>
-								</div>
-							</a>
-						</li>`;
-					} #} 
-				{# } 
-				
-
-			{# function sendMessage() {
-        		var inputField = document.getElementById("message-input");
-        		var message = inputField.value;
-        		{% if conversation.activityOwner.id is same as (app.user.id) %}
-            		messageTarget = sender;
-        		{% else %}
-            		messageTarget = {{ conversation.activityOwner.id }};
-        		{% endif %}
-
-        		const messageData = {
-				content: message,
-				conversation: "/conversations/{{ conversation.id }}",
-				recipient: "/users/" + messageTarget,
-				sent: "/users/{{ app.user.id }}"
-        		}
-			}; #}
 			{% endif %}
 
 			eventSource.onmessage = event => {
